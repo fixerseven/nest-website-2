@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://nestworkspaces.com/sitemap.xml
