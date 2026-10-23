@@ -1,5 +1,12 @@
 # Nest 2.0 website
 
+Two audiences, one site:
+- `index.html` asks who the space is for and splits visitors into two paths.
+- `community.html` (Nest Community): colorful, for day passes, students and freelancers.
+- `business.html` (Nest for Business): calm and minimal, for memberships, offices, meeting rooms, studios and venues.
+
+Shape language is squares and rounded squares only (no arched frames, no round bullets). Styles for these pages live in `public/assets/split.css`; visual references are in `docs/references/`.
+
 Static site for Cloudflare Workers (static assets). No build step.
 
 ## Deploy (after Nath approves the preview)
