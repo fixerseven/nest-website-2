@@ -1,6 +1,12 @@
 # Nest 2.0 website
 
-Static site for Cloudflare Workers (static assets). No build step.
+Static site patterned on WeWork: announcement bar, photo hero with a booking card, stories, feature sections, stats band, lead form and FAQ.
+
+The home page splits visitors into two ways in, as sections of the same page:
+- `#community` (Nest Community): saturated rounded-square tiles on near-black, for day passes, students and freelancers.
+- `#business` (Nest for Business): calm oat band with one large photo, for memberships, offices, meeting rooms, studios and venues.
+
+Shape language is squares and rounded squares (no arches or round bullets). Visual references are in `docs/references/`.
 
 ## Deploy (after Nath approves the preview)
 From this folder, on a computer logged in to Cloudflare:
