@@ -1,40 +1,52 @@
 // Nest Workspaces site script.
-// Inquiry forms compose an email to hello@nestworkspaces.com; the rest is small UI behaviour.
+// Full-screen menu, the live "Open now" line, and inquiry forms that compose an email to
+// hello@nestworkspaces.com.
 (function () {
   var TO = "hello@nestworkspaces.com";
 
-  function store(key, value) {
-    try {
-      if (value === undefined) return window.localStorage.getItem(key);
-      window.localStorage.setItem(key, value);
-    } catch (e) { return null; }
-  }
-
-  // Announcement bar: dismiss and remember for this browser.
-  var bar = document.querySelector(".announce");
-  if (bar) {
-    var id = bar.getAttribute("data-id") || "announce";
-    if (store("nest-hide-" + id) === "1") bar.hidden = true;
-    var close = bar.querySelector(".announce-close");
-    if (close) close.addEventListener("click", function () { bar.hidden = true; store("nest-hide-" + id, "1"); });
-  }
-
-  // Desktop dropdowns: close on outside click or Escape.
-  var dds = document.querySelectorAll("details.dd, details.menu");
-  document.addEventListener("click", function (e) {
-    dds.forEach(function (d) { if (d.open && !d.contains(e.target)) d.open = false; });
-  });
-  document.addEventListener("keydown", function (e) {
-    if (e.key !== "Escape") return;
-    dds.forEach(function (d) {
-      if (d.open) { d.open = false; var s = d.querySelector("summary"); if (s) s.focus(); }
+  // Menu: a <dialog> opened from the "Menu" button. Escape and the Close button shut it.
+  var menu = document.getElementById("site-menu");
+  if (menu && typeof menu.showModal === "function") {
+    document.querySelectorAll("[data-menu-open]").forEach(function (btn) {
+      btn.setAttribute("aria-expanded", "false");
+      btn.addEventListener("click", function () {
+        menu.showModal();
+        btn.setAttribute("aria-expanded", "true");
+      });
     });
-  });
-  document.querySelectorAll(".menu a, .dd a").forEach(function (a) {
-    a.addEventListener("click", function () { var d = a.closest("details"); if (d) d.open = false; });
+    menu.querySelectorAll("[data-menu-close]").forEach(function (btn) {
+      btn.addEventListener("click", function () { menu.close(); });
+    });
+    menu.addEventListener("close", function () {
+      document.querySelectorAll("[data-menu-open]").forEach(function (b) { b.setAttribute("aria-expanded", "false"); });
+    });
+    // Close when a link to a section of the current page is used.
+    menu.querySelectorAll("a").forEach(function (a) {
+      a.addEventListener("click", function () { menu.close(); });
+    });
+  }
+
+  // Open now: walk-ins 7 AM to 1 AM, Cebu time (UTC+8, no daylight saving).
+  function cebuHour() {
+    var now = new Date();
+    var utc = now.getTime() + now.getTimezoneOffset() * 60000;
+    var cebu = new Date(utc + 8 * 3600000);
+    return cebu.getHours() + cebu.getMinutes() / 60;
+  }
+  var h = cebuHour();
+  var open = h >= 7 || h < 1;
+  document.querySelectorAll("[data-status]").forEach(function (el) {
+    var text = el.querySelector("[data-status-text]");
+    if (!text) return;
+    if (open) {
+      text.textContent = "Open now · until 1 AM";
+    } else {
+      text.textContent = "Closed now · opens 7 AM";
+      el.classList.add("is-closed");
+    }
   });
 
-  // Preselect "I'm interested in" from ?interest= or from the hero plan bar.
+  // Preselect a dropdown from ?interest= (for example visit.html?interest=Meeting%20room).
   function preselect(value) {
     if (!value) return;
     document.querySelectorAll('select[name="interest"]').forEach(function (sel) {
@@ -44,19 +56,6 @@
     });
   }
   try { preselect(new URLSearchParams(window.location.search).get("interest")); } catch (e) {}
-
-  document.querySelectorAll("form.plan").forEach(function (plan) {
-    plan.addEventListener("submit", function (e) {
-      var sel = plan.querySelector("select");
-      var target = document.getElementById("contact");
-      if (!target) return; // falls back to the form's action
-      e.preventDefault();
-      preselect(sel && sel.value);
-      target.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
-      var first = target.querySelector("input");
-      if (first) setTimeout(function () { first.focus({ preventScroll: true }); }, 400);
-    });
-  });
 
   // Number steppers.
   document.querySelectorAll(".stepper").forEach(function (st) {
@@ -79,9 +78,10 @@
       var lines = [];
       form.querySelectorAll("input, select, textarea").forEach(function (el) {
         if (!el.name || !el.value) return;
+        if (el.type === "checkbox") { if (!el.checked) return; }
         var label = form.querySelector('label[for="' + el.id + '"]');
         var text = label ? label.textContent.replace(/\(optional\)/i, "").trim() : el.name;
-        lines.push(text + ": " + el.value.trim());
+        lines.push(text + ": " + (el.type === "checkbox" ? "Yes" : el.value.trim()));
       });
       var nameField = form.querySelector('[name="name"]');
       if (nameField && nameField.value) subject += " from " + nameField.value.trim();
@@ -92,22 +92,6 @@
     });
   });
 
-
-  // Story filters: tabs show one category at a time; photo-only tiles appear under "All".
-  document.querySelectorAll("[data-tabs]").forEach(function (tabs) {
-    var grid = document.getElementById(tabs.getAttribute("data-tabs"));
-    if (!grid) return;
-    tabs.querySelectorAll("button[data-filter]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var f = btn.getAttribute("data-filter");
-        tabs.querySelectorAll("button[data-filter]").forEach(function (b) { b.setAttribute("aria-pressed", String(b === btn)); });
-        grid.querySelectorAll(".story").forEach(function (card) {
-          card.hidden = !(f === "all" || card.getAttribute("data-cat") === f);
-        });
-      });
-    });
-  });
-
-  var y = document.getElementById("year");
+  var y = document.querySelector("[data-year]");
   if (y) y.textContent = String(new Date().getFullYear());
 })();

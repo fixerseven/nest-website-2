@@ -1,0 +1,38 @@
+<!--
+title: Stories from the Nest | Nest Workspaces, Cebu City
+description: Member stories, studio guides, study tips and news from Nest Workspaces, a coworking space and studio in Cebu City.
+-->
+<main id="main">
+
+<section class="page-intro" aria-labelledby="page-title">
+  <h1 id="page-title">Stories from the nest —</h1>
+  <p>Member stories, studio guides and news from Nest Workspaces in Cebu City.</p>
+</section>
+
+<section aria-label="All stories" id="all-stories" style="padding-top: clamp(40px, 5vw, 64px)">
+  <div class="story-grid">{{story_cards}}</div>
+</section>
+
+<section id="share" class="form-wrap" aria-labelledby="share-title">
+  <div class="fw-side">
+    <p class="label">Flock Stories</p>
+    <h2 id="share-title">Share your story.</h2>
+    <p>We're collecting stories from people who work, study and create at Nest. Tell us what your next thing was and how it went. If we'd like to feature it, we'll ask first and set up a short interview and a photo.</p>
+    <ul class="ticks" style="width: 100%">
+      <li>The board exam you passed</li>
+      <li>The client you landed or the job you got</li>
+      <li>The brand, shoot or event you launched here</li>
+    </ul>
+  </div>
+  <form class="form" data-mailto="Flock story" novalidate>
+    <p class="h-md">Tell us your next thing.</p>
+    <div class="form-row"><div class="field"><label for="sh-name">Name</label><input id="sh-name" name="name" autocomplete="name" required></div><div class="field"><label for="sh-email">Email</label><input id="sh-email" name="email" type="email" autocomplete="email" required></div></div>
+    <div class="form-row"><div class="field"><label for="sh-phone">Mobile <span class="opt">(optional)</span></label><input id="sh-phone" name="phone" type="tel" autocomplete="tel"></div><div class="field"><label for="sh-role">What do you do? <span class="opt">(optional)</span></label><input id="sh-role" name="role"></div></div>
+    <div class="field"><label for="sh-story">Your next thing</label><textarea id="sh-story" name="story" required></textarea></div>
+    <label class="check" for="sh-ok"><input id="sh-ok" name="ok" type="checkbox" value="yes" required> You can contact me about featuring my story. Nothing is published without my OK.</label>
+    <div class="form-actions"><button class="btn btn-solid" type="submit">Send my story {{arrow}}</button><p class="form-note">Sending opens your email app with your story filled in.</p></div>
+    <p class="form-status" role="status" aria-live="polite"></p>
+  </form>
+</section>
+
+</main>
