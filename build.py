@@ -94,6 +94,22 @@ def head(meta, name):
 <link rel="preload" href="assets/fonts/roboto-serif-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/poppins-regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/site.css">
+<script>
+  // Mark JS as on (so motion styles apply) and show the intro loader once a day.
+  (function (d) {{
+    d.classList.add("js");
+    // If site.js never runs, show everything rather than leave it hidden.
+    setTimeout(function () {{ if (!d.classList.contains("motion-on")) d.classList.remove("js"); }}, 4000);
+    try {{
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var day = new Date().toDateString();
+      if (localStorage.getItem("nest-intro") !== day) {{
+        d.classList.add("show-loader");
+        localStorage.setItem("nest-intro", day);
+      }}
+    }} catch (e) {{}}
+  }})(document.documentElement);
+</script>
 <!-- Meta Pixel: paste the Pixel base code here and replace PIXEL_ID. -->
 <!-- Google Analytics 4: paste the gtag.js snippet here and replace G-XXXXXXXXXX. -->
 </head>
@@ -102,7 +118,7 @@ def head(meta, name):
 
 def status_line(cls=""):
     # Filled in by site.js with the live open/closed state in Cebu time.
-    return f'<p class="status {cls}" data-status><span class="dot" aria-hidden="true"></span><span data-status-text>Open daily · 7 AM to 1 AM</span></p>'
+    return f'<p class="status {cls}" data-status><span class="dot" aria-hidden="true"></span><span data-status-text>Walk-ins 7 AM to 1 AM · Members 24 hours</span></p>'
 
 
 def topbar(name, on_photo):
@@ -113,12 +129,20 @@ def topbar(name, on_photo):
         f'      <li><a href="{n}.html"{current if n == name else ""}>{label}</a></li>'
         for n, label in NAV)
     return f"""<body>
+<div class="loader" aria-hidden="true">
+  <p class="loader-top"><span>Nest Workspaces</span><span>Cebu City</span></p>
+  <div class="loader-bottom">
+    <p class="loader-line">Walk-ins 7 AM to 1 AM · Members 24 hours</p>
+    <p class="loader-mark">nest</p>
+    <div class="loader-progress"><span></span></div>
+  </div>
+</div>
 <a class="skip" href="#main">Skip to content</a>
 <header class="topbar{' on-photo' if on_photo else ''}">
   <button class="menu-btn" type="button" aria-haspopup="dialog" aria-controls="site-menu" data-menu-open>Menu <svg viewBox="0 0 20 12" aria-hidden="true" focusable="false"><path d="M1 2h18M1 10h18"/></svg></button>
   <a class="logo" href="index.html">{logo}</a>
 </header>
-<dialog class="menu" id="site-menu" aria-label="Menu">
+<dialog class="menu" id="site-menu" aria-label="Menu" data-lenis-prevent>
   <div class="menu-top">
     <button class="menu-btn" type="button" data-menu-close>Close <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 4l12 12M16 4L4 16"/></svg></button>
     <a class="logo" href="index.html"><img src="img/nest-logo.svg" alt="Nest Workspaces home" width="74" height="61"></a>
@@ -131,7 +155,7 @@ def topbar(name, on_photo):
   <div class="menu-side">
     {status_line()}
     <p>B1, Horizons 101 Condominiums<br>Gen. Maxilom Ave, Cebu City</p>
-    <p>Walk-ins daily 7 AM to 1 AM.<br>Members 24/7.</p>
+    <p>Walk-ins daily 7 AM to 1 AM.<br>Members 24 hours.</p>
     <div class="btn-row"><a class="btn btn-solid" href="visit.html#tour">Book a tour {ARROW}</a><a class="btn" href="{MESSENGER}">Message us</a></div>
     <p><a href="{PHONE_HREF}">{PHONE}</a><br><a href="mailto:{EMAIL}">{EMAIL}</a></p>
   </div>
@@ -152,8 +176,8 @@ def footer(name):
   <h2 id="ways-title" class="ways-intro">— A coworking space and studio under one roof. <strong>Pick how you want to use it.</strong></h2>
   <div class="ways-cards">
     <a class="way" href="coworking.html#passes"><span class="label">Coworking</span><span class="way-name">Work —</span><span class="way-text">Day passes, Flexi Passes and memberships, from ₱400.</span><span class="btn">See passes {ARROW}</span></a>
-    <a class="way" href="studios.html#book"><span class="label">Studios</span><span class="way-name">Shoot —</span><span class="way-text">Three studios with lights and backdrops included.</span><span class="btn">Request a booking {ARROW}</span></a>
-    <a class="way" href="events.html#plan"><span class="label">Events</span><span class="way-name">Host —</span><span class="way-text">The whole studio floor for 60 to 100 guests.</span><span class="btn">Plan an event {ARROW}</span></a>
+    <a class="way" href="studios.html#book"><span class="label">Studios</span><span class="way-name">Shoot —</span><span class="way-text">Two studios, or the Entire Studio to yourself, with lights included.</span><span class="btn">Request a booking {ARROW}</span></a>
+    <a class="way" href="events.html#plan"><span class="label">Events</span><span class="way-name">Host —</span><span class="way-text">The Entire Studio for 60 to 100 guests.</span><span class="btn">Plan an event {ARROW}</span></a>
   </div>
 </section>
 <footer class="site-footer">
@@ -166,7 +190,7 @@ def footer(name):
     </div>
     <div>
       <p class="label">Hours</p>
-      <p>Daily 7 AM to 1 AM<br>24/7 for members</p>
+      <p>Walk-ins 7 AM to 1 AM<br>Members 24 hours</p>
     </div>
     <div>
       <p class="label">Talk to us</p>
@@ -181,6 +205,7 @@ def footer(name):
     <a href="{MESSENGER}">Message us</a>
   </div>
 </footer>
+<script src="assets/vendor/lenis.min.js" defer></script>
 <script src="assets/site.js" defer></script>
 </body>
 </html>
@@ -219,7 +244,7 @@ def story_page(slug, meta, body, stories):
   <aside class="article-cta">
     <p class="label">Nest Workspaces</p>
     <p class="cta-title">Ready for your next thing?</p>
-    <p>B1 Horizons 101, Gen. Maxilom Ave, Cebu City. Open 7 AM to 1 AM, and 24/7 for members.</p>
+    <p>B1 Horizons 101, Gen. Maxilom Ave, Cebu City. Walk-ins 7 AM to 1 AM, and 24 hours for members.</p>
     <a class="btn" href="{meta["cta_href"]}">{meta["cta_label"]} {ARROW}</a>
   </aside>
 </article>

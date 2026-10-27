@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Nest Workspaces | Coworking, Meeting Rooms and Studios in Cebu City</title>
-<meta name="description" content="Coworking desks, private offices, meeting rooms and three studios at Horizons 101, Gen. Maxilom Ave, Cebu City. Open daily 7 AM to 1 AM, 24/7 for members.">
+<meta name="description" content="Coworking desks, private offices, meeting rooms and photo studios at Horizons 101, Gen. Maxilom Ave, Cebu City. Open to walk-ins 7 AM to 1 AM, and 24 hours for members.">
 <link rel="canonical" href="https://nestworkspaces.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Nest Workspaces">
 <meta property="og:title" content="Nest Workspaces | Coworking, Meeting Rooms and Studios in Cebu City">
-<meta property="og:description" content="Coworking desks, private offices, meeting rooms and three studios at Horizons 101, Gen. Maxilom Ave, Cebu City. Open daily 7 AM to 1 AM, 24/7 for members.">
+<meta property="og:description" content="Coworking desks, private offices, meeting rooms and photo studios at Horizons 101, Gen. Maxilom Ave, Cebu City. Open to walk-ins 7 AM to 1 AM, and 24 hours for members.">
 <meta property="og:url" content="https://nestworkspaces.com/">
 <meta property="og:image" content="https://nestworkspaces.com/img/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -20,16 +20,40 @@
 <link rel="preload" href="assets/fonts/roboto-serif-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/poppins-regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/site.css">
+<script>
+  // Mark JS as on (so motion styles apply) and show the intro loader once a day.
+  (function (d) {
+    d.classList.add("js");
+    // If site.js never runs, show everything rather than leave it hidden.
+    setTimeout(function () { if (!d.classList.contains("motion-on")) d.classList.remove("js"); }, 4000);
+    try {
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var day = new Date().toDateString();
+      if (localStorage.getItem("nest-intro") !== day) {
+        d.classList.add("show-loader");
+        localStorage.setItem("nest-intro", day);
+      }
+    } catch (e) {}
+  })(document.documentElement);
+</script>
 <!-- Meta Pixel: paste the Pixel base code here and replace PIXEL_ID. -->
 <!-- Google Analytics 4: paste the gtag.js snippet here and replace G-XXXXXXXXXX. -->
 </head>
 <body>
+<div class="loader" aria-hidden="true">
+  <p class="loader-top"><span>Nest Workspaces</span><span>Cebu City</span></p>
+  <div class="loader-bottom">
+    <p class="loader-line">Walk-ins 7 AM to 1 AM · Members 24 hours</p>
+    <p class="loader-mark">nest</p>
+    <div class="loader-progress"><span></span></div>
+  </div>
+</div>
 <a class="skip" href="#main">Skip to content</a>
 <header class="topbar on-photo">
   <button class="menu-btn" type="button" aria-haspopup="dialog" aria-controls="site-menu" data-menu-open>Menu <svg viewBox="0 0 20 12" aria-hidden="true" focusable="false"><path d="M1 2h18M1 10h18"/></svg></button>
   <a class="logo" href="index.html"><img src="img/nest-logo-white.png" alt="Nest Workspaces home" width="92" height="76"></a>
 </header>
-<dialog class="menu" id="site-menu" aria-label="Menu">
+<dialog class="menu" id="site-menu" aria-label="Menu" data-lenis-prevent>
   <div class="menu-top">
     <button class="menu-btn" type="button" data-menu-close>Close <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 4l12 12M16 4L4 16"/></svg></button>
     <a class="logo" href="index.html"><img src="img/nest-logo.svg" alt="Nest Workspaces home" width="74" height="61"></a>
@@ -47,9 +71,9 @@
     </ul>
   </nav>
   <div class="menu-side">
-    <p class="status " data-status><span class="dot" aria-hidden="true"></span><span data-status-text>Open daily · 7 AM to 1 AM</span></p>
+    <p class="status " data-status><span class="dot" aria-hidden="true"></span><span data-status-text>Walk-ins 7 AM to 1 AM · Members 24 hours</span></p>
     <p>B1, Horizons 101 Condominiums<br>Gen. Maxilom Ave, Cebu City</p>
-    <p>Walk-ins daily 7 AM to 1 AM.<br>Members 24/7.</p>
+    <p>Walk-ins daily 7 AM to 1 AM.<br>Members 24 hours.</p>
     <div class="btn-row"><a class="btn btn-solid" href="visit.html#tour">Book a tour <svg class="arw" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://m.me/nestworkspacesph">Message us</a></div>
     <p><a href="tel:+639454510789">(0945) 451 0789</a><br><a href="mailto:hello@nestworkspaces.com">hello@nestworkspaces.com</a></p>
   </div>
@@ -59,7 +83,7 @@
 <section class="hero" aria-labelledby="hero-title">
   <img src="img/amphitheater.jpg" alt="The amphitheater at Nest, with the do that thing neon on the orange wall" width="1536" height="1024" fetchpriority="high">
   <div class="info-card">
-    <p class="status " data-status><span class="dot" aria-hidden="true"></span><span data-status-text>Open daily · 7 AM to 1 AM</span></p>
+    <p class="status " data-status><span class="dot" aria-hidden="true"></span><span data-status-text>Walk-ins 7 AM to 1 AM · Members 24 hours</span></p>
     <h1 id="hero-title">Nest&nbsp;—<span class="sr-only"> Workspaces, Cebu City</span></h1>
     <p>Coworking, meeting rooms and studios in the heart of Cebu City. Walk in for ₱400 a day.</p>
     <a class="btn" href="visit.html#tour">Book a tour <svg class="arw" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
@@ -72,7 +96,7 @@
     <p class="addr"><span class="a-serif">Horizons 101</span><span class="a-caps">Gen. Maxilom Ave</span></p>
     <a class="pill-tag" href="visit.html" style="text-decoration: none"><span class="dot" aria-hidden="true"></span>Horizons 101, Cebu City</a>
   </div>
-  <p class="intro">Coworking, meeting rooms and three studios on Gen. Maxilom Ave. <strong>Nest is open to everyone, every day from 7 AM to 1 AM.</strong></p>
+  <p class="intro">Coworking, meeting rooms and studios on Gen. Maxilom Ave. <strong>Walk in any day from 7 AM to 1 AM. Members get in 24 hours.</strong></p>
 </section>
 
 <section class="pgrid" aria-label="At Nest">
@@ -83,7 +107,7 @@
     </div>
     <p>Pass the boards, land the client, launch the brand. Students, reviewees, freelancers, founders and creators work side by side here.</p>
   </div>
-  <img class="c-a" src="img/open-desks.jpg" alt="The open desks and dedicated desk zones" width="1200" height="800" loading="lazy" decoding="async">
+  <div class="ph c-a"><img src="img/open-desks.jpg" alt="The open desks and dedicated desk zones" width="1200" height="800" loading="lazy" decoding="async"></div>
   <div class="tcell c-b" id="business">
     <div>
       <p class="label">Meeting rooms</p>
@@ -104,12 +128,12 @@
       <a class="btn" href="coworking.html#passes">See all passes <svg class="arw" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
     </div>
   </div>
-  <img class="c-d" src="img/meeting-room-large.jpg" alt="The large meeting room with its green walls" width="1200" height="800" loading="lazy" decoding="async">
+  <div class="ph c-d"><img src="img/meeting-room-large.jpg" alt="The large meeting room with its green walls" width="1200" height="800" loading="lazy" decoding="async"></div>
 </section>
 
 <section class="section-head wide-text ruled" aria-labelledby="studios-title">
   <h2 id="studios-title">Nest Studios</h2>
-  <p>Three studios under one roof: a 12 by 4 m infinity wall, a podcast room and a multipurpose studio. Lights, stands, backdrops and the dressing room come with every booking.</p>
+  <p>A 12 by 4 m infinity wall and a multipurpose studio under one roof, or book the Entire Studio for yourself. Lights, stands, backdrops and the dressing room come with every booking.</p>
 </section>
 <section class="photo-band" aria-label="Studio 1">
   <img src="img/studio-shoot.jpg" alt="A crew shooting a group portrait on the Studio 1 infinity wall" width="1400" height="933" loading="lazy" decoding="async">
@@ -126,28 +150,28 @@
 
 <section aria-labelledby="members-title">
   <div class="section-head">
-    <h2 id="members-title">Become a member, 24/7</h2>
+    <h2 id="members-title">Become a member, open 24 hours</h2>
     <div>
       <p>Your own keycard, 3 meeting room hours, 10 color prints and 6 guest hours every month. Hotdesks from ₱5,500 and dedicated desks from ₱6,500 a month. Private offices from ₱20,000.</p>
       <div class="btn-row"><a class="btn" href="coworking.html#memberships">Memberships <svg class="arw" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="coworking.html#offices">Private offices <svg class="arw" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
     </div>
   </div>
   <div class="photo-row">
-    <img src="img/lounge.jpg" alt="The lounge under the ring lights" width="1536" height="1024" loading="lazy" decoding="async">
-    <img src="img/people/booth-meeting.jpg" alt="Two people meeting in a booth" width="1067" height="1600" loading="lazy" decoding="async">
-    <img src="img/private-offices.jpg" alt="The row of private offices" width="1200" height="800" loading="lazy" decoding="async">
+    <div class="ph"><img src="img/lounge.jpg" alt="The lounge under the ring lights" width="1536" height="1024" loading="lazy" decoding="async"></div>
+    <div class="ph"><img src="img/people/booth-meeting.jpg" alt="Two people meeting in a booth" width="1067" height="1600" loading="lazy" decoding="async"></div>
+    <div class="ph"><img src="img/private-offices.jpg" alt="The row of private offices" width="1200" height="800" loading="lazy" decoding="async"></div>
   </div>
 </section>
 
 <section class="band-dark" aria-labelledby="hours-title">
   <div class="section-head">
-    <h2 id="hours-title">Open 7 AM to 1 AM</h2>
-    <p>Walk in any day of the week. Members come and go 24/7 with their own keycard.</p>
+    <h2 id="hours-title">Walk in 7 AM to 1 AM</h2>
+    <p>Walk-ins are welcome every day from 7 AM to 1 AM. Members come and go 24 hours a day with their own keycard.</p>
   </div>
   <div class="hours">
     <div class="hour"><img src="img/people/girls-laptop-orange.jpg" alt="" width="1067" height="1600" loading="lazy" decoding="async"><p class="t">7 AM</p><p class="d">Coffee, then the first deadline</p></div>
     <div class="hour"><img src="img/people/pitch.jpg" alt="" width="1600" height="1067" loading="lazy" decoding="async"><p class="t">12 PM</p><p class="d">Meetings, interviews and pitches</p></div>
-    <div class="hour"><img src="img/studio-podcast.jpg" alt="" width="1200" height="800" loading="lazy" decoding="async"><p class="t">4 PM</p><p class="d">Shoots and podcasts in the studios</p></div>
+    <div class="hour"><img src="img/studio-break.jpg" alt="" width="1400" height="933" loading="lazy" decoding="async"><p class="t">4 PM</p><p class="d">Shoots and content days in the studios</p></div>
     <div class="hour"><img src="img/marble-table.jpg" alt="" width="1400" height="933" loading="lazy" decoding="async"><p class="t">9 PM → 1 AM</p><p class="d">Owl Pass hours, coffee still on us</p></div>
   </div>
 </section>
@@ -158,20 +182,20 @@
     <a class="btn" href="visit.html">Visit us <svg class="arw" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
   </div>
   <div>
-    <h2 class="s-big">On Gen. Maxilom Ave in Cebu City, <strong>Nest Workspaces</strong> has desks, private offices, meeting rooms, three studios and a venue for 100.</h2>
+    <h2 class="s-big">On Gen. Maxilom Ave in Cebu City, <strong>Nest Workspaces</strong> has desks, private offices, meeting rooms, photo studios and a venue for 100.</h2>
     <a class="text-link" href="stories.html">Stories from the nest <svg class="arw" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
   </div>
 </section>
 
-<img class="full-photo" src="img/story-boardgame.jpg" alt="Members laughing over a board game at a round table in the lounge" width="1600" height="1066" loading="lazy" decoding="async">
+<div class="ph full-photo"><img src="img/story-boardgame.jpg" alt="Members laughing over a board game at a round table in the lounge" width="1600" height="1066" loading="lazy" decoding="async"></div>
 
 </main>
 <section class="ways" aria-labelledby="ways-title">
   <h2 id="ways-title" class="ways-intro">— A coworking space and studio under one roof. <strong>Pick how you want to use it.</strong></h2>
   <div class="ways-cards">
     <a class="way" href="coworking.html#passes"><span class="label">Coworking</span><span class="way-name">Work —</span><span class="way-text">Day passes, Flexi Passes and memberships, from ₱400.</span><span class="btn">See passes <svg class="arw" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
-    <a class="way" href="studios.html#book"><span class="label">Studios</span><span class="way-name">Shoot —</span><span class="way-text">Three studios with lights and backdrops included.</span><span class="btn">Request a booking <svg class="arw" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
-    <a class="way" href="events.html#plan"><span class="label">Events</span><span class="way-name">Host —</span><span class="way-text">The whole studio floor for 60 to 100 guests.</span><span class="btn">Plan an event <svg class="arw" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
+    <a class="way" href="studios.html#book"><span class="label">Studios</span><span class="way-name">Shoot —</span><span class="way-text">Two studios, or the Entire Studio to yourself, with lights included.</span><span class="btn">Request a booking <svg class="arw" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
+    <a class="way" href="events.html#plan"><span class="label">Events</span><span class="way-name">Host —</span><span class="way-text">The Entire Studio for 60 to 100 guests.</span><span class="btn">Plan an event <svg class="arw" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
   </div>
 </section>
 <footer class="site-footer">
@@ -184,7 +208,7 @@
     </div>
     <div>
       <p class="label">Hours</p>
-      <p>Daily 7 AM to 1 AM<br>24/7 for members</p>
+      <p>Walk-ins 7 AM to 1 AM<br>Members 24 hours</p>
     </div>
     <div>
       <p class="label">Talk to us</p>
@@ -199,6 +223,7 @@
     <a href="https://m.me/nestworkspacesph">Message us</a>
   </div>
 </footer>
+<script src="assets/vendor/lenis.min.js" defer></script>
 <script src="assets/site.js" defer></script>
 </body>
 </html>
