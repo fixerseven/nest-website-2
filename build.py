@@ -159,7 +159,7 @@ def topbar(name, on_photo):
     {status_line()}
     <p>B1, Horizons 101 Condominiums<br>Gen. Maxilom Ave, Cebu City</p>
     <p>Walk-ins daily 7 AM to 1 AM.<br>Members 24 hours.</p>
-    <div class="btn-row"><a class="btn btn-solid" href="visit.html#tour">Book a tour {ARROW}</a><a class="btn" href="find-your-space.html">Find your space</a></div>
+    <div class="btn-row"><a class="btn btn-solid" href="find-your-space.html?tour">Book a tour {ARROW}</a><a class="btn" href="find-your-space.html">Find your space</a></div>
     <p><a href="{PHONE_HREF}">{PHONE}</a><br><a href="mailto:{EMAIL}">{EMAIL}</a></p>
   </div>
 </dialog>

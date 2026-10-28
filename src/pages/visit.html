@@ -11,7 +11,7 @@ hero: photo
     {{status}}
     <h1 id="hero-title">Visit Nest —</h1>
     <p>B1, Horizons 101 Condominiums, Gen. Maxilom Ave, Cebu City. Walk in any day, or book a tour and we'll show you around.</p>
-    <div class="btn-row"><a class="btn btn-solid" href="#tour">Book a tour {{arrow}}</a><a class="btn" href="#find">Get directions</a></div>
+    <div class="btn-row"><a class="btn btn-solid" href="find-your-space.html?tour">Book a tour {{arrow}}</a><a class="btn" href="#find">Get directions</a></div>
   </div>
 </section>
 
@@ -44,7 +44,10 @@ hero: photo
   <div class="fw-side">
     <p class="label">Book a tour</p>
     <h2 id="tour-title">Let us find a space that works for you.</h2>
-    <p>Tell us what you need and when you'd like to come in. We'll reply with availability and a time for your tour.</p>
+    <p>Answer a few quick questions, pick a day and time, and we'll show you around. You'll see which pass, room or studio fits along the way.</p>
+    <a class="btn btn-solid" href="find-your-space.html?tour">Book a tour {{arrow}}</a>
+  </div>
+  <div class="fw-side" style="border-right: 0">
     <div class="ph"><img src="img/lounge-create.jpg" alt="The Nest lounge with marble tables, orange chairs and a lit CREATE column" width="1200" height="800" loading="lazy" decoding="async"></div>
     <div style="display: grid; gap: 6px">
       <p class="label">Prefer to talk?</p>
@@ -53,15 +56,6 @@ hero: photo
       <p><a href="mailto:hello@nestworkspaces.com">hello@nestworkspaces.com</a></p>
     </div>
   </div>
-  <form class="form" data-mailto="Nest tour request" novalidate>
-    <div class="form-row"><div class="field"><label for="tour-name">Name</label><input id="tour-name" name="name" autocomplete="name" required></div><div class="field"><label for="tour-email">Email</label><input id="tour-email" name="email" type="email" autocomplete="email" required></div></div>
-    <div class="form-row"><div class="field"><label for="tour-phone">Mobile <span class="opt">(optional)</span></label><input id="tour-phone" name="phone" type="tel" autocomplete="tel"></div><div class="field"><label for="tour-company">Company or school <span class="opt">(optional)</span></label><input id="tour-company" name="company" autocomplete="organization"></div></div>
-    <div class="form-row"><div class="field"><label for="tour-interest">I'm interested in</label><select id="tour-interest" name="interest" required><option>A tour of the space</option><option>Day, Owl or Week Pass</option><option>Flexi Pass</option><option>Hotdesk Membership</option><option>Dedicated desk</option><option>Private office or booth</option><option>Meeting room</option><option>Studio booking</option><option>Event or venue hire</option><option>Founding Flock: 3 months for ₱15,000</option></select></div><div class="field"><label for="tour-people">For how many people?</label><div class="stepper"><input id="tour-people" name="people" type="number" inputmode="numeric" min="1" max="100" value="1"><button type="button" data-step="-1" aria-label="One fewer">−</button><button type="button" data-step="1" aria-label="One more">+</button></div></div></div>
-    <div class="form-row"><div class="field"><label for="tour-date">Preferred date <span class="opt">(optional)</span></label><input id="tour-date" name="date" type="date"></div><div class="field"><label for="tour-time">Preferred time <span class="opt">(optional)</span></label><input id="tour-time" name="time" type="time"></div></div>
-    <div class="field"><label for="tour-notes">Anything else? <span class="opt">(optional)</span></label><textarea id="tour-notes" name="notes"></textarea></div>
-    <div class="form-actions"><button class="btn btn-solid" type="submit">Send request {{arrow}}</button><p class="form-note">Sending opens your email app with your details filled in.</p></div>
-    <p class="form-status" role="status" aria-live="polite"></p>
-  </form>
 </section>
 
 </main>

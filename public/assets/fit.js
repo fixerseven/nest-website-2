@@ -29,7 +29,8 @@
       ["work", "Work or study", "A seat for the day, the month or longer"],
       ["meet", "A meeting", "Interviews, workshops, study groups"],
       ["shoot", "A photo or video shoot", "Studios with lights and backdrops"],
-      ["event", "An event", "Launches, talks, parties"]] },
+      ["event", "An event", "Launches, talks, parties"],
+      ["tour", "Just a tour for now", "See the space first, decide later"]] },
 
     { id: "who", path: "work", q: "Who's coming?", opts: [
       ["solo", "Just me"],
@@ -125,6 +126,8 @@
       text: "58.5 sqm with a 12 by 4 m cyclorama, for up to 60 people. Each extra hour is ₱2,500. Dressing room included." },
     amphi: { name: "Amphitheater", price: "From ₱2,000", link: "meeting-rooms.html",
       text: "Tiered seating in the coworking space, good for talks and study sessions." },
+    tour: { name: "A tour of Nest", price: "Free", link: "visit.html",
+      text: "We'll show you the desks, booths, offices, meeting rooms and studios, and answer your questions. Pick a day and time below, or just walk in any day from 7 AM to 1 AM." },
     entire: { name: "Entire Studio", price: "From ₱14,000 for 4 hours", link: "events.html",
       text: "Studio 1, Studio 3 and the dressing room, just for you, for 60 to 100 people. Tables, chairs, projector, mics and a speaker included." }
   };
@@ -133,7 +136,9 @@
   function recommend(a) {
     var r = { alt: null, estimate: "" };
     var h = Number(a.hours || 0);
-    if (a.goal === "work") {
+    if (a.goal === "tour") {
+      r.main = "tour";
+    } else if (a.goal === "work") {
       var group = a.who !== "solo";
       if (a.often === "once") {
         r.main = a.when === "night" ? "owl" : "day";
@@ -186,12 +191,16 @@
     { name: "name", label: "What's your name?", type: "text", auto: "name", required: true },
     { name: "email", label: "What email should we reply to?", type: "email", auto: "email", required: true },
     { name: "phone", label: "Your mobile number", type: "tel", auto: "tel" },
-    { name: "date", label: "When would you like to start?", type: "date" },
+    { name: "date", label: "What day would you like to come in?", type: "date" },
+    { name: "time", label: "What time works for you?", type: "time" },
     { name: "notes", label: "Anything else we should know?", type: "textarea" }
   ];
 
   var answers = {};
   var history = [];
+  // Book a tour links arrive with ?tour; links from a service page can skip the first question with ?goal=work.
+  var params = new URLSearchParams(window.location.search);
+  var TOUR = params.has("tour");
 
   function steps() {
     return QUESTIONS.filter(function (q) {
@@ -256,9 +265,9 @@
 
   function card(key, cls) {
     var p = PICKS[key];
-    return '<div class="fit-card ' + (cls || "") + '"><p class="label">' + (cls === "is-main" ? "We recommend" : "Also worth a look") + "</p>" +
+    return '<div class="fit-card ' + (cls || "") + '"><p class="label">' + (key === "tour" ? "Your visit" : cls === "is-main" ? "We recommend" : "Also worth a look") + "</p>" +
       '<h3 class="h-md">' + p.name + '</h3><p class="price">' + p.price + "</p><p>" + p.text + "</p>" +
-      '<a class="text-link" href="' + p.link + '">See details ' + ARROW + "</a></div>";
+      '<a class="text-link" href="' + p.link + '">' + (key === "tour" ? "Directions and hours " : "See details ") + ARROW + "</a></div>";
   }
 
   function showResult() {
@@ -270,9 +279,10 @@
     var answered = summary().map(function (s) { return "<li><span>" + s[0] + "</span><strong>" + s[1] + "</strong></li>"; }).join("");
     stage.innerHTML =
       '<div class="fit-result">' +
-      '<h2 class="h-md">Here\'s what fits.</h2>' +
+      '<h2 class="h-md">' + (r.main === "tour" ? "Come see the space." : "Here\'s what fits.") + "</h2>" +
       card(r.main, "is-main") +
-      (r.estimate ? '<p class="fit-estimate">' + r.estimate + " Students get 10% off. PWD and senior citizens get 20% off.</p>" : '<p class="fit-estimate">Students get 10% off. PWD and senior citizens get 20% off.</p>') +
+      (r.main === "tour" ? "" : '<p class="fit-estimate">' + (r.estimate ? r.estimate + " " : "") + "Students get 10% off. PWD and senior citizens get 20% off." +
+        (TOUR ? " We'll show you around when you come in." : "") + "</p>") +
       (r.alt ? card(r.alt) : "") +
       '<details class="fit-answers"><summary>Your answers</summary><ul>' + answered + "</ul></details>" +
       "</div>" +
@@ -342,12 +352,18 @@
       "Name: " + v("name"),
       "Email: " + v("email"),
       v("phone") ? "Mobile: " + v("phone") : null,
-      v("date") ? "Start date: " + v("date") : null,
+      v("date") ? "Visit date: " + v("date") : null,
+      v("time") ? "Visit time: " + v("time") : null,
       v("notes") ? "Notes: " + v("notes") : null
     ]).filter(function (l) { return l !== null; });
-    var subject = "Find your space: " + main.name + " for " + v("name");
+    var tour = TOUR || answers.goal === "tour";
+    if (tour && r.main !== "tour") lines.splice(lines.indexOf("Answers:") - 1, 0, "Wants a tour: Yes");
+    var subject = (tour ? "Tour request: " : "Find your space: ") + main.name + " for " + v("name");
+    // Count a sent form as a Lead when the Meta Pixel is on the page.
+    function lead() { if (window.fbq) window.fbq("track", "Lead"); }
 
     if (!KEY) {
+      lead();
       window.location.href = "mailto:" + TO + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(lines.join("\n") + "\n");
       status.textContent = "Your email app should open with this filled in. If it doesn't, email " + TO + " directly.";
       return;
@@ -371,6 +387,7 @@
       body: JSON.stringify(payload)
     }).then(function (res) { return res.json(); }).then(function (data) {
       if (!data.success) throw new Error(data.message || "Send failed");
+      lead();
       stage.innerHTML = '<div class="fit-result"><h2 class="h-md">Thanks, ' + v("name").split(" ")[0].replace(/[<>&"]/g, "") + ". It's on its way.</h2>" +
         "<p>We'll reply to " + v("email").replace(/[<>&"]/g, "") + " with availability soon. Need it sooner? Call <a href=\"tel:+639454510789\">(0945) 451 0789</a> or <a href=\"https://m.me/nestworkspacesph\">message us</a>.</p>" +
         '<div class="btn-row"><a class="btn" href="' + main.link + '">See ' + main.name + " " + ARROW + "</a></div></div>";
@@ -382,5 +399,12 @@
     });
   }
 
-  showQuestion(0);
+  var goal = params.get("goal");
+  if (goal && QUESTIONS[0].opts.some(function (o) { return o[0] === goal; })) {
+    answers.goal = goal;
+    history.push(0);
+    showQuestion(1);
+  } else {
+    showQuestion(0);
+  }
 })();
