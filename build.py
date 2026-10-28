@@ -24,7 +24,7 @@ EMAIL = "hello@nestworkspaces.com"
 # Web3Forms access key for the Find your space form (web3forms.com, made with the inbox above).
 # Leave empty and the form opens the visitor's email app instead.
 FORM_KEY = ""
-# The POS endpoint that files Find your space requests on the front desk's New sign-ups strip.
+# The POS endpoint that files Find your space requests as leads (Quotes & Invoices → Leads).
 POS_INTAKE_URL = "https://pos.nestworkspaces.com/api/intake/web"
 MESSENGER = "https://m.me/nestworkspacesph"
 MAPS = "https://www.google.com/maps/search/?api=1&amp;query=Nest%20Workspaces%20Horizons%20101%20Gen.%20Maxilom%20Ave%20Cebu%20City"

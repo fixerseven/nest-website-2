@@ -381,7 +381,7 @@
       status.textContent = "Your email app should open with this filled in. If it doesn't, email " + TO + " directly.";
     }
 
-    // The POS files the request on the front desk's New sign-ups strip. Sent as
+    // The POS files the request as a lead beside Quotes (Quotes & Invoices → Leads). Sent as
     // text/plain so the browser skips the CORS preflight; the POS reads it as JSON.
     function toPos() {
       if (!POS) return Promise.resolve(false);
@@ -390,6 +390,7 @@
         headers: { "Content-Type": "text/plain" },
         body: JSON.stringify({
           name: v("name"), phone: v("phone"), email: v("email"),
+          goal: answers.goal,
           recommendation: main.name + " (" + main.price + ")",
           date: v("date"), time: v("time"), message: lines.join("\n")
         })
