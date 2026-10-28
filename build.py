@@ -21,6 +21,11 @@ SITE = "https://nestworkspaces.com"
 PHONE = "(0945) 451 0789"
 PHONE_HREF = "tel:+639454510789"
 EMAIL = "hello@nestworkspaces.com"
+# Web3Forms access key for the Find your space form (web3forms.com, made with the inbox above).
+# Leave empty and the form opens the visitor's email app instead.
+FORM_KEY = ""
+# The POS endpoint that files Find your space requests as leads (Quotes & Invoices → Leads).
+POS_INTAKE_URL = "https://pos.nestworkspaces.com/api/intake/web"
 MESSENGER = "https://m.me/nestworkspacesph"
 MAPS = "https://www.google.com/maps/search/?api=1&amp;query=Nest%20Workspaces%20Horizons%20101%20Gen.%20Maxilom%20Ave%20Cebu%20City"
 
@@ -166,7 +171,7 @@ def topbar(name, on_photo):
     {status_line()}
     <p>B1, Horizons 101 Condominiums<br>Gen. Maxilom Ave, Cebu City</p>
     <p>Walk-ins daily 7 AM to 1 AM.<br>Members 24 hours.</p>
-    <div class="btn-row"><a class="btn btn-solid" href="visit.html#tour">Book a tour {ARROW}</a><a class="btn" href="{MESSENGER}">Message us</a></div>
+    <div class="btn-row"><a class="btn btn-solid" href="find-your-space.html?tour">Book a tour {ARROW}</a><a class="btn" href="find-your-space.html">Find your space</a></div>
     <p><a href="{PHONE_HREF}">{PHONE}</a><br><a href="mailto:{EMAIL}">{EMAIL}</a></p>
   </div>
 </dialog>
@@ -184,6 +189,7 @@ def footer(name):
         ])
     return f"""<section class="ways" aria-labelledby="ways-title">
   <h2 id="ways-title" class="ways-intro">— A coworking space and studio under one roof. <strong>Pick how you want to use it.</strong></h2>
+  <p class="ways-quiz">Not sure which? <a class="text-link" href="find-your-space.html">Answer a few quick questions {ARROW}</a></p>
   <div class="ways-cards">
     <a class="way" href="coworking.html#passes"><span class="label">Coworking</span><span class="way-name">Work —</span><span class="way-text">Day passes, Flexi Passes and memberships, from ₱400.</span><span class="btn">See passes {ARROW}</span></a>
     <a class="way" href="studios.html#book"><span class="label">Studios</span><span class="way-name">Shoot —</span><span class="way-text">Two studios, or the Entire Studio to yourself, with lights included.</span><span class="btn">Request a booking {ARROW}</span></a>
@@ -224,6 +230,7 @@ def footer(name):
 
 def expand(body):
     body = body.replace("{{arrow}}", ARROW).replace("{{status}}", status_line())
+    body = body.replace("{{email}}", EMAIL).replace("{{form_key}}", FORM_KEY).replace("{{pos_intake}}", POS_INTAKE_URL)
     # Keep the closing dash of a title ("Nest —") on the same line as its last word.
     body = re.sub(r" —(?=</h[1-3]>|<span)", "&nbsp;—", body)
     # Keep times together ("1 AM" never splits across lines).

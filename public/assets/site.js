@@ -320,13 +320,32 @@
     if (a) track("Contact", { content_name: a.getAttribute("href").split(":")[0] === "https" ? "Messenger" : a.getAttribute("href").split(":")[0] });
   });
 
-  // Inquiry forms open the visitor's email app with the request filled in.
+  // Booking forms (studios, meeting rooms, events) file the request as a lead
+  // in the POS; anything else, or a POS that can't be reached, opens the
+  // visitor's email app with the request filled in.
+  function checkContact(form) {
+    var name = form.querySelector('[name="name"]');
+    if (name) name.setCustomValidity(name.value && name.value.trim().length < 2 ? "Please enter your name." : "");
+    var phone = form.querySelector('[name="phone"]');
+    if (phone) {
+      var v = phone.value.trim();
+      phone.setCustomValidity(v && (/[^0-9+()\-.\s]/.test(v) || v.replace(/\D/g, "").length < 7)
+        ? "Please enter a mobile number, like 0917 123 4567." : "");
+    }
+  }
+  var today = new Date();
+  var todayIso = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + ("0" + today.getDate()).slice(-2);
+
   document.querySelectorAll("form[data-mailto]").forEach(function (form) {
+    form.querySelectorAll('input[type="date"]').forEach(function (d) { d.min = todayIso; });
+    form.addEventListener("input", function (e) { if (e.target.setCustomValidity) e.target.setCustomValidity(""); });
     form.addEventListener("submit", function (event) {
       event.preventDefault();
+      checkContact(form);
       if (!form.reportValidity()) return;
       var subject = form.getAttribute("data-mailto") || "Inquiry";
       var lines = [];
+      var val = function (n) { var el = form.querySelector('[name="' + n + '"]'); return el ? el.value.trim() : ""; };
       form.querySelectorAll("input, select, textarea").forEach(function (el) {
         if (!el.name || !el.value) return;
         if (el.type === "checkbox") { if (!el.checked) return; }
@@ -334,13 +353,39 @@
         var text = label ? label.textContent.replace(/\(optional\)/i, "").trim() : el.name;
         lines.push(text + ": " + (el.type === "checkbox" ? "Yes" : el.value.trim()));
       });
-      var nameField = form.querySelector('[name="name"]');
-      if (nameField && nameField.value) subject += " from " + nameField.value.trim();
-      var href = "mailto:" + TO + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(lines.join("\n") + "\n");
+      if (val("name")) subject += " from " + val("name");
       var status = form.querySelector(".form-status");
-      if (status) status.textContent = "Your email app should open with this request filled in. If it doesn't, email " + TO + " directly.";
-      track("Lead", { content_name: form.getAttribute("data-mailto") || "Inquiry" });
-      window.location.href = href;
+      var button = form.querySelector('button[type="submit"]');
+
+      function mailto() {
+        if (status) status.textContent = "Your email app should open with this request filled in. If it doesn't, email " + TO + " directly.";
+        track("Lead", { content_name: form.getAttribute("data-mailto") || "Inquiry" });
+        window.location.href = "mailto:" + TO + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(lines.join("\n") + "\n");
+      }
+      var pos = form.getAttribute("data-pos");
+      if (!pos) return mailto();
+
+      // What they asked for, as the Leads tab shows it: "Studio 1 · Infinity Wall, 4 hours".
+      var ask = [val("interest"), val("hours") ? val("hours") + " hours" : "",
+        val("people") ? val("people") + " people" : "", val("guests") ? val("guests") + " guests" : ""]
+        .filter(Boolean).join(", ");
+      if (button) button.disabled = true;
+      if (status) status.textContent = "Sending…";
+      fetch(pos, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify({
+          name: val("name"), phone: val("phone"), email: val("email"), goal: form.getAttribute("data-goal"),
+          recommendation: ask, date: val("date"), time: val("time"),
+          message: subject + "\n" + lines.join("\n")
+        })
+      }).then(function (res) {
+        if (!res.ok) throw new Error(res.status);
+        track("Lead", { content_name: form.getAttribute("data-mailto") || "Inquiry" });
+        var first = val("name").split(" ")[0];
+        form.reset();
+        if (status) status.textContent = "Thanks, " + first + ". We got your request and will reply with availability soon. Need it sooner? Call (0945) 451 0789.";
+      }).catch(mailto).then(function () { if (button) button.disabled = false; });
     });
   });
 
