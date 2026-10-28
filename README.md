@@ -22,7 +22,7 @@ From this folder, on a computer logged in to Cloudflare:
 
     npx wrangler deploy
 
-That publishes the `public/` folder as the Worker `nest-workspaces`. It first goes live at a workers.dev address for checking.
+Cloudflare Workers Builds is connected to this repo, so every merge to main publishes the `public/` folder as the Worker `nest-website-2` by itself. The manual command above does the same from a computer logged in to Cloudflare.
 Connect nestworkspaces.com and www only after the domain's DNS has moved to Cloudflare. Copy the Google Workspace MX records and the POS records first; the move is described in the Nest 2.0 Relaunch Plan.
 
 ## Before going live
