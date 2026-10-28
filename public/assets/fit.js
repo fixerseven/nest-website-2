@@ -271,6 +271,19 @@
       '<a class="text-link" href="' + p.link + '">' + (key === "tour" ? "Directions and hours " : "See details ") + ARROW + "</a></div>";
   }
 
+  // What the browser can't check on its own, matched to what the POS accepts:
+  // a real name (not just spaces) and a mobile number with at least 7 digits.
+  function check(field) {
+    var value = field.value.trim();
+    var message = "";
+    if (field.name === "name" && field.value && value.length < 2) message = "Please enter your name.";
+    if (field.name === "phone" && field.value &&
+        (/[^0-9+()\-.\s]/.test(value) || value.replace(/\D/g, "").length < 7)) {
+      message = "Please enter a mobile number, like 0917 123 4567.";
+    }
+    field.setCustomValidity(message);
+  }
+
   function showResult() {
     var r = recommend(answers);
     var list = steps();
@@ -322,11 +335,18 @@
       var f = FIELDS[at];
       next.innerHTML = (at === FIELDS.length - 1 ? "Send to Nest " : f.required || form[f.name].value ? "Next " : "Skip ") + ARROW;
     }
-    form.addEventListener("input", nextLabel);
+    form.addEventListener("input", function (e) {
+      if (e.target.setCustomValidity) e.target.setCustomValidity("");
+      nextLabel();
+    });
+    // No visit day in the past.
+    var today = new Date();
+    form.date.min = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + ("0" + today.getDate()).slice(-2);
     back.addEventListener("click", function () { showField(at - 1); });
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var field = form[FIELDS[at].name];
+      check(field);
       if (!field.reportValidity()) return;
       if (at < FIELDS.length - 1) showField(at + 1);
       else send(form, r);
@@ -335,6 +355,7 @@
   }
 
   function send(form, r) {
+    FIELDS.forEach(function (f) { check(form[f.name]); });
     if (!form.reportValidity()) return;
     if (form.botcheck.checked) return;
     var status = form.querySelector(".form-status");
