@@ -111,13 +111,13 @@ hero: photo
     <p>Send your date, start time and headcount. We'll confirm availability and the total.</p>
     <p class="muted">Prefer to talk? Call <a href="tel:+639454510789">(0945) 451 0789</a>, message us on <a href="https://m.me/nestworkspacesph">Messenger</a> or email <a href="mailto:hello@nestworkspaces.com">hello@nestworkspaces.com</a>.</p>
   </div>
-  <form class="form" data-mailto="Meeting room booking" novalidate>
+  <form class="form" data-mailto="Meeting room booking" data-goal="meet" data-pos="{{pos_intake}}" novalidate>
     <div class="form-row"><div class="field"><label for="mr-name">Name</label><input id="mr-name" name="name" autocomplete="name" required></div><div class="field"><label for="mr-email">Email</label><input id="mr-email" name="email" type="email" autocomplete="email" required></div></div>
-    <div class="form-row"><div class="field"><label for="mr-phone">Mobile <span class="opt">(optional)</span></label><input id="mr-phone" name="phone" type="tel" autocomplete="tel"></div><div class="field"><label for="mr-room">Room</label><select id="mr-room" name="interest" required><option>Small room, up to 6</option><option>Large room, up to 12</option><option>Amphitheater</option><option>Not sure yet</option></select></div></div>
+    <div class="form-row"><div class="field"><label for="mr-phone">Mobile</label><input id="mr-phone" name="phone" type="tel" autocomplete="tel" required></div><div class="field"><label for="mr-room">Room</label><select id="mr-room" name="interest" required><option>Small room, up to 6</option><option>Large room, up to 12</option><option>Amphitheater</option><option>Not sure yet</option></select></div></div>
     <div class="form-row"><div class="field"><label for="mr-date">Date</label><input id="mr-date" name="date" type="date" required></div><div class="field"><label for="mr-time">Start time</label><input id="mr-time" name="time" type="time" required></div></div>
     <div class="form-row"><div class="field"><label for="mr-hours">Hours</label><div class="stepper"><input id="mr-hours" name="hours" type="number" inputmode="numeric" min="1" max="18" value="2"><button type="button" data-step="-1" aria-label="One hour fewer">−</button><button type="button" data-step="1" aria-label="One hour more">+</button></div></div><div class="field"><label for="mr-people">How many people?</label><div class="stepper"><input id="mr-people" name="people" type="number" inputmode="numeric" min="1" max="40" value="4"><button type="button" data-step="-1" aria-label="One fewer">−</button><button type="button" data-step="1" aria-label="One more">+</button></div></div></div>
     <div class="field"><label for="mr-notes">What's the meeting for? <span class="opt">(optional)</span></label><textarea id="mr-notes" name="notes"></textarea></div>
-    <div class="form-actions"><button class="btn btn-solid" type="submit">Send booking request {{arrow}}</button><p class="form-note">Sending opens your email app with your details filled in.</p></div>
+    <div class="form-actions"><button class="btn btn-solid" type="submit">Send booking request {{arrow}}</button><p class="form-note">We'll reply with availability and the total.</p></div>
     <p class="form-status" role="status" aria-live="polite"></p>
   </form>
 </section>
