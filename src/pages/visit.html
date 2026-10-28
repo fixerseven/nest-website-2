@@ -1,0 +1,67 @@
+<!--
+title: Visit Nest | Book a Tour at Horizons 101, Cebu City | Nest Workspaces
+description: Find Nest Workspaces at B1, Horizons 101, Gen. Maxilom Ave, Cebu City. Open to walk-ins daily 7 AM to 1 AM, and 24 hours for members, with free parking. Book a tour, call or message us.
+hero: photo
+-->
+<main id="main">
+
+<section class="hero" aria-labelledby="hero-title">
+  <img src="img/front-desk.jpg" alt="The Nest front desk, with a member checking in" width="1400" height="933" fetchpriority="high">
+  <div class="info-card">
+    {{status}}
+    <h1 id="hero-title">Visit Nest —</h1>
+    <p>B1, Horizons 101 Condominiums, Gen. Maxilom Ave, Cebu City. Walk in any day, or book a tour and we'll show you around.</p>
+    <div class="btn-row"><a class="btn btn-solid" href="#tour">Book a tour {{arrow}}</a><a class="btn" href="#find">Get directions</a></div>
+  </div>
+</section>
+
+<section class="wordmark" id="find" aria-labelledby="find-title">
+  <div class="mark-block">
+    <h2 id="find-title" class="sr-only">Where to find us</h2>
+    <p class="addr" style="margin-top: 0"><span class="a-serif" style="font-size: clamp(2.75rem, 6vw, 5.5rem)">Horizons 101</span></p>
+    <p class="addr" style="margin-top: 8px"><span class="a-caps" style="font-size: clamp(1rem, 2vw, 1.75rem)">Gen. Maxilom Ave, Cebu City</span></p>
+    <a class="pill-tag" href="https://www.google.com/maps/search/?api=1&amp;query=Nest%20Workspaces%20Horizons%20101%20Gen.%20Maxilom%20Ave%20Cebu%20City" style="text-decoration: none"><span class="dot" aria-hidden="true"></span>Open in Google Maps</a>
+  </div>
+  <p class="intro">We're on the basement level (B1) of Horizons 101 Condominiums. <strong>Parking is free for members and guests.</strong></p>
+</section>
+
+<iframe class="map" title="Map showing Nest Workspaces at Horizons 101, Gen. Maxilom Ave, Cebu City" src="https://www.google.com/maps?q=Horizons%20101%20Gen.%20Maxilom%20Ave%20Cebu%20City&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+<section aria-labelledby="hours-title">
+  <div class="section-head">
+    <h2 id="hours-title">Hours and getting in</h2>
+    <p>No appointment needed for a Day Pass. Book a tour if you'd like someone to walk you through memberships, offices or the studios.</p>
+  </div>
+  <div class="facts-grid">
+    <div><strong>Walk-ins 7 AM to 1 AM</strong><span>Walk-ins, Day Passes and Week Passes, every day of the week.</span></div>
+    <div><strong>24 hours for members</strong><span>Members and Owl Pass holders come and go with a keycard.</span></div>
+    <div><strong>Free parking</strong><span>For members and guests at Horizons 101.</span></div>
+    <div><strong>Pay how you like</strong><span>Cash, GCash, credit and debit cards, and bank transfer.</span></div>
+  </div>
+</section>
+
+<section id="tour" class="form-wrap mt-section" aria-labelledby="tour-title">
+  <div class="fw-side">
+    <p class="label">Book a tour</p>
+    <h2 id="tour-title">Let us find a space that works for you.</h2>
+    <p>Tell us what you need and when you'd like to come in. We'll reply with availability and a time for your tour.</p>
+    <div class="ph"><img src="img/lounge-create.jpg" alt="The Nest lounge with marble tables, orange chairs and a lit CREATE column" width="1200" height="800" loading="lazy" decoding="async"></div>
+    <div style="display: grid; gap: 6px">
+      <p class="label">Prefer to talk?</p>
+      <p><a href="tel:+639454510789">(0945) 451 0789</a></p>
+      <p><a href="https://m.me/nestworkspacesph">Message us on Messenger</a></p>
+      <p><a href="mailto:hello@nestworkspaces.com">hello@nestworkspaces.com</a></p>
+    </div>
+  </div>
+  <form class="form" data-mailto="Nest tour request" novalidate>
+    <div class="form-row"><div class="field"><label for="tour-name">Name</label><input id="tour-name" name="name" autocomplete="name" required></div><div class="field"><label for="tour-email">Email</label><input id="tour-email" name="email" type="email" autocomplete="email" required></div></div>
+    <div class="form-row"><div class="field"><label for="tour-phone">Mobile <span class="opt">(optional)</span></label><input id="tour-phone" name="phone" type="tel" autocomplete="tel"></div><div class="field"><label for="tour-company">Company or school <span class="opt">(optional)</span></label><input id="tour-company" name="company" autocomplete="organization"></div></div>
+    <div class="form-row"><div class="field"><label for="tour-interest">I'm interested in</label><select id="tour-interest" name="interest" required><option>A tour of the space</option><option>Day, Owl or Week Pass</option><option>Flexi Pass</option><option>Hotdesk Membership</option><option>Dedicated desk</option><option>Private office or booth</option><option>Meeting room</option><option>Studio booking</option><option>Event or venue hire</option><option>Founding Flock: 3 months for ₱15,000</option></select></div><div class="field"><label for="tour-people">For how many people?</label><div class="stepper"><input id="tour-people" name="people" type="number" inputmode="numeric" min="1" max="100" value="1"><button type="button" data-step="-1" aria-label="One fewer">−</button><button type="button" data-step="1" aria-label="One more">+</button></div></div></div>
+    <div class="form-row"><div class="field"><label for="tour-date">Preferred date <span class="opt">(optional)</span></label><input id="tour-date" name="date" type="date"></div><div class="field"><label for="tour-time">Preferred time <span class="opt">(optional)</span></label><input id="tour-time" name="time" type="time"></div></div>
+    <div class="field"><label for="tour-notes">Anything else? <span class="opt">(optional)</span></label><textarea id="tour-notes" name="notes"></textarea></div>
+    <div class="form-actions"><button class="btn btn-solid" type="submit">Send request {{arrow}}</button><p class="form-note">Sending opens your email app with your details filled in.</p></div>
+    <p class="form-status" role="status" aria-live="polite"></p>
+  </form>
+</section>
+
+</main>
