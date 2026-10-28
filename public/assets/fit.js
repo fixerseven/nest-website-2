@@ -8,6 +8,7 @@
 
   var TO = root.getAttribute("data-to") || "hello@nestworkspaces.com";
   var KEY = root.getAttribute("data-key") || "";
+  var POS = root.getAttribute("data-pos") || "";
   var stage = root.querySelector("[data-fit-stage]");
   var bar = root.querySelector("[data-fit-bar]");
   var count = document.querySelector("[data-fit-count]");
@@ -190,7 +191,7 @@
   var FIELDS = [
     { name: "name", label: "What's your name?", type: "text", auto: "name", required: true },
     { name: "email", label: "What email should we reply to?", type: "email", auto: "email", required: true },
-    { name: "phone", label: "Your mobile number", type: "tel", auto: "tel" },
+    { name: "phone", label: "Your mobile number", type: "tel", auto: "tel", required: true },
     { name: "date", label: "What day would you like to come in?", type: "date" },
     { name: "time", label: "What time works for you?", type: "time" },
     { name: "notes", label: "Anything else we should know?", type: "textarea" }
@@ -299,7 +300,7 @@
       '<div class="form-actions"><button class="btn btn-solid" type="submit" data-next>Next ' + ARROW + '</button>' +
       '<button type="button" class="fit-back" data-field-back hidden>← Back</button>' +
       '<button type="button" class="fit-back" data-restart>Start over</button></div>' +
-      (KEY ? "" : '<p class="form-note" data-send-note hidden>Sending opens your email app with everything filled in.</p>') +
+      (KEY || POS ? "" : '<p class="form-note" data-send-note hidden>Sending opens your email app with everything filled in.</p>') +
       '<p class="form-status" role="status" aria-live="polite"></p></form>';
     stage.querySelector("[data-restart]").addEventListener("click", function () { answers = {}; history = []; showQuestion(0); });
     var form = stage.querySelector(".fit-send");
@@ -362,40 +363,62 @@
     // Count a sent form as a Lead when the Meta Pixel is on the page.
     function lead() { if (window.fbq) window.fbq("track", "Lead"); }
 
-    if (!KEY) {
+    var esc = function (t) { return t.replace(/[<>&"]/g, ""); };
+
+    function thanks() {
+      lead();
+      stage.innerHTML = '<div class="fit-result"><h2 class="h-md">Thanks, ' + esc(v("name").split(" ")[0]) + ". It's on its way.</h2>" +
+        "<p>We'll reply to " + esc(v("email")) + " or text " + esc(v("phone")) + " with availability soon. Need it sooner? Call <a href=\"tel:+639454510789\">(0945) 451 0789</a> or <a href=\"https://m.me/nestworkspacesph\">message us</a>.</p>" +
+        '<div class="btn-row"><a class="btn" href="' + main.link + '">See ' + main.name + " " + ARROW + "</a></div></div>";
+      progress(1, 1);
+      focusStage();
+    }
+
+    function mailto() {
       lead();
       window.location.href = "mailto:" + TO + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(lines.join("\n") + "\n");
+      button.disabled = false;
       status.textContent = "Your email app should open with this filled in. If it doesn't, email " + TO + " directly.";
-      return;
+    }
+
+    // The POS files the request on the front desk's New sign-ups strip. Sent as
+    // text/plain so the browser skips the CORS preflight; the POS reads it as JSON.
+    function toPos() {
+      if (!POS) return Promise.resolve(false);
+      return fetch(POS, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify({
+          name: v("name"), phone: v("phone"), email: v("email"),
+          recommendation: main.name + " (" + main.price + ")",
+          date: v("date"), time: v("time"), message: lines.join("\n")
+        })
+      }).then(function (res) { return res.ok; }).catch(function () { return false; });
+    }
+
+    // The email copy, through Web3Forms once FORM_KEY is set.
+    function toEmail() {
+      if (!KEY) return Promise.resolve(false);
+      return fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: KEY, subject: subject, from_name: "Nest website",
+          name: v("name"), email: v("email"), phone: v("phone"),
+          recommendation: main.name + " (" + main.price + ")",
+          message: lines.join("\n")
+        })
+      }).then(function (res) { return res.json(); })
+        .then(function (data) { return !!data.success; })
+        .catch(function () { return false; });
     }
 
     button.disabled = true;
     status.textContent = "Sending…";
-    var payload = {
-      access_key: KEY,
-      subject: subject,
-      from_name: "Nest website",
-      name: v("name"),
-      email: v("email"),
-      phone: v("phone"),
-      recommendation: main.name + " (" + main.price + ")",
-      message: lines.join("\n")
-    };
-    fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify(payload)
-    }).then(function (res) { return res.json(); }).then(function (data) {
-      if (!data.success) throw new Error(data.message || "Send failed");
-      lead();
-      stage.innerHTML = '<div class="fit-result"><h2 class="h-md">Thanks, ' + v("name").split(" ")[0].replace(/[<>&"]/g, "") + ". It's on its way.</h2>" +
-        "<p>We'll reply to " + v("email").replace(/[<>&"]/g, "") + " with availability soon. Need it sooner? Call <a href=\"tel:+639454510789\">(0945) 451 0789</a> or <a href=\"https://m.me/nestworkspacesph\">message us</a>.</p>" +
-        '<div class="btn-row"><a class="btn" href="' + main.link + '">See ' + main.name + " " + ARROW + "</a></div></div>";
-      progress(1, 1);
-      focusStage();
-    }).catch(function () {
-      button.disabled = false;
-      status.innerHTML = 'That didn\'t go through. Please try again, or email <a href="mailto:' + TO + '">' + TO + "</a>.";
+    Promise.all([toPos(), toEmail()]).then(function (sent) {
+      if (sent[0] || sent[1]) return thanks();
+      // Neither reached Nest: fall back to the visitor's email app.
+      mailto();
     });
   }
 

@@ -24,6 +24,8 @@ EMAIL = "hello@nestworkspaces.com"
 # Web3Forms access key for the Find your space form (web3forms.com, made with the inbox above).
 # Leave empty and the form opens the visitor's email app instead.
 FORM_KEY = ""
+# The POS endpoint that files Find your space requests on the front desk's New sign-ups strip.
+POS_INTAKE_URL = "https://pos.nestworkspaces.com/api/intake/web"
 MESSENGER = "https://m.me/nestworkspacesph"
 MAPS = "https://www.google.com/maps/search/?api=1&amp;query=Nest%20Workspaces%20Horizons%20101%20Gen.%20Maxilom%20Ave%20Cebu%20City"
 
@@ -218,7 +220,7 @@ def footer(name):
 
 def expand(body):
     body = body.replace("{{arrow}}", ARROW).replace("{{status}}", status_line())
-    body = body.replace("{{email}}", EMAIL).replace("{{form_key}}", FORM_KEY)
+    body = body.replace("{{email}}", EMAIL).replace("{{form_key}}", FORM_KEY).replace("{{pos_intake}}", POS_INTAKE_URL)
     # Keep the closing dash of a title ("Nest —") on the same line as its last word.
     body = re.sub(r" —(?=</h[1-3]>|<span)", "&nbsp;—", body)
     # Keep times together ("1 AM" never splits across lines).
