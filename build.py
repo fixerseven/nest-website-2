@@ -115,7 +115,17 @@ def head(meta, name):
     }} catch (e) {{}}
   }})(document.documentElement);
 </script>
-<!-- Meta Pixel: paste the Pixel base code here and replace PIXEL_ID. -->
+<!-- Meta Pixel (dataset "Nest Walk-In Data" in the Nest business). -->
+<script>
+  !function(f,b,e,v,n,t,s){{if(f.fbq)return;n=f.fbq=function(){{n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)}};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}}(window,
+  document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1346842319931970');
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1346842319931970&amp;ev=PageView&amp;noscript=1"></noscript>
 <!-- Google Analytics 4: paste the gtag.js snippet here and replace G-XXXXXXXXXX. -->
 </head>
 """

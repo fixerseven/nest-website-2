@@ -22,10 +22,10 @@ From this folder, on a computer logged in to Cloudflare:
 
     npx wrangler deploy
 
-That publishes the `public/` folder as the Worker `nest-workspaces`. It first goes live at a workers.dev address for checking.
+Cloudflare Workers Builds is connected to this repo, so every merge to main publishes the `public/` folder as the Worker `nest-website-2` by itself. The manual command above does the same from a computer logged in to Cloudflare.
 Connect nestworkspaces.com and www only after the domain's DNS has moved to Cloudflare. Copy the Google Workspace MX records and the POS records first; the move is described in the Nest 2.0 Relaunch Plan.
 
 ## Before going live
 - Confirm prices flagged in the plan: Flexi 15-Day Pass, dedicated desks, Flexi validity, Studio 3 minimum, Amphitheater, Podcast Studio.
-- The Founding Flock notice (src/pages/coworking.html), Exam Mode (src/pages/meeting-rooms.html) and Christmas at Nest (src/pages/events.html) are marked with HTML comments. Remove them if they're not approved.
-- Add the Meta Pixel and GA4 IDs where the commented placeholders are.
+- Exam Mode (src/pages/meeting-rooms.html) is marked with an HTML comment. Remove it if it's not approved.
+- The Meta Pixel (dataset "Nest Walk-In Data") is in the shared head in build.py. It tracks PageView, Lead (an inquiry form is sent) and Contact (Messenger, phone or email link). Add the GA4 ID where the commented placeholder is.

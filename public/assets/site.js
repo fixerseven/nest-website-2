@@ -311,6 +311,15 @@
     });
   });
 
+  // Meta Pixel events. fbq is loaded in the page head; skip quietly if it was blocked.
+  function track(name, params) {
+    try { if (window.fbq) window.fbq("track", name, params || {}); } catch (e) {}
+  }
+  document.addEventListener("click", function (event) {
+    var a = event.target.closest && event.target.closest('a[href^="https://m.me/"], a[href^="tel:"], a[href^="mailto:"]');
+    if (a) track("Contact", { content_name: a.getAttribute("href").split(":")[0] === "https" ? "Messenger" : a.getAttribute("href").split(":")[0] });
+  });
+
   // Booking forms (studios, meeting rooms, events) file the request as a lead
   // in the POS; anything else, or a POS that can't be reached, opens the
   // visitor's email app with the request filled in.
@@ -350,6 +359,7 @@
 
       function mailto() {
         if (status) status.textContent = "Your email app should open with this request filled in. If it doesn't, email " + TO + " directly.";
+        track("Lead", { content_name: form.getAttribute("data-mailto") || "Inquiry" });
         window.location.href = "mailto:" + TO + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(lines.join("\n") + "\n");
       }
       var pos = form.getAttribute("data-pos");
@@ -371,7 +381,7 @@
         })
       }).then(function (res) {
         if (!res.ok) throw new Error(res.status);
-        if (window.fbq) window.fbq("track", "Lead");
+        track("Lead", { content_name: form.getAttribute("data-mailto") || "Inquiry" });
         var first = val("name").split(" ")[0];
         form.reset();
         if (status) status.textContent = "Thanks, " + first + ". We got your request and will reply with availability soon. Need it sooner? Call (0945) 451 0789.";
