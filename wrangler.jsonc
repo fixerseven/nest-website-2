@@ -4,5 +4,7 @@
   "assets": {
     "directory": "./public",
     "not_found_handling": "404-page"
-  }
+  },
+  // Lets Cloudflare build a preview for each pull request (npx wrangler preview).
+  "previews": {}
 }
