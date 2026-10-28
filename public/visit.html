@@ -36,7 +36,17 @@
     } catch (e) {}
   })(document.documentElement);
 </script>
-<!-- Meta Pixel: paste the Pixel base code here and replace PIXEL_ID. -->
+<!-- Meta Pixel (dataset "Nest Walk-In Data" in the Nest business). -->
+<script>
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+  document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1346842319931970');
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1346842319931970&amp;ev=PageView&amp;noscript=1"></noscript>
 <!-- Google Analytics 4: paste the gtag.js snippet here and replace G-XXXXXXXXXX. -->
 </head>
 <body>
@@ -131,7 +141,7 @@
   <form class="form" data-mailto="Nest tour request" novalidate>
     <div class="form-row"><div class="field"><label for="tour-name">Name</label><input id="tour-name" name="name" autocomplete="name" required></div><div class="field"><label for="tour-email">Email</label><input id="tour-email" name="email" type="email" autocomplete="email" required></div></div>
     <div class="form-row"><div class="field"><label for="tour-phone">Mobile <span class="opt">(optional)</span></label><input id="tour-phone" name="phone" type="tel" autocomplete="tel"></div><div class="field"><label for="tour-company">Company or school <span class="opt">(optional)</span></label><input id="tour-company" name="company" autocomplete="organization"></div></div>
-    <div class="form-row"><div class="field"><label for="tour-interest">I'm interested in</label><select id="tour-interest" name="interest" required><option>A tour of the space</option><option>Day, Owl or Week Pass</option><option>Flexi Pass</option><option>Hotdesk Membership</option><option>Dedicated desk</option><option>Private office or booth</option><option>Meeting room</option><option>Studio booking</option><option>Event or venue hire</option><option>Founding Flock: 3 months for ₱15,000</option></select></div><div class="field"><label for="tour-people">For how many people?</label><div class="stepper"><input id="tour-people" name="people" type="number" inputmode="numeric" min="1" max="100" value="1"><button type="button" data-step="-1" aria-label="One fewer">−</button><button type="button" data-step="1" aria-label="One more">+</button></div></div></div>
+    <div class="form-row"><div class="field"><label for="tour-interest">I'm interested in</label><select id="tour-interest" name="interest" required><option>A tour of the space</option><option>Day, Owl or Week Pass</option><option>Flexi Pass</option><option>Hotdesk Membership</option><option>Dedicated desk</option><option>Private office or booth</option><option>Meeting room</option><option>Studio booking</option><option>Event or venue hire</option></select></div><div class="field"><label for="tour-people">For how many people?</label><div class="stepper"><input id="tour-people" name="people" type="number" inputmode="numeric" min="1" max="100" value="1"><button type="button" data-step="-1" aria-label="One fewer">−</button><button type="button" data-step="1" aria-label="One more">+</button></div></div></div>
     <div class="form-row"><div class="field"><label for="tour-date">Preferred date <span class="opt">(optional)</span></label><input id="tour-date" name="date" type="date"></div><div class="field"><label for="tour-time">Preferred time <span class="opt">(optional)</span></label><input id="tour-time" name="time" type="time"></div></div>
     <div class="field"><label for="tour-notes">Anything else? <span class="opt">(optional)</span></label><textarea id="tour-notes" name="notes"></textarea></div>
     <div class="form-actions"><button class="btn btn-solid" type="submit">Send request <svg class="arw" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button><p class="form-note">Sending opens your email app with your details filled in.</p></div>

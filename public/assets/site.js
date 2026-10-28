@@ -311,6 +311,15 @@
     });
   });
 
+  // Meta Pixel events. fbq is loaded in the page head; skip quietly if it was blocked.
+  function track(name, params) {
+    try { if (window.fbq) window.fbq("track", name, params || {}); } catch (e) {}
+  }
+  document.addEventListener("click", function (event) {
+    var a = event.target.closest && event.target.closest('a[href^="https://m.me/"], a[href^="tel:"], a[href^="mailto:"]');
+    if (a) track("Contact", { content_name: a.getAttribute("href").split(":")[0] === "https" ? "Messenger" : a.getAttribute("href").split(":")[0] });
+  });
+
   // Inquiry forms open the visitor's email app with the request filled in.
   document.querySelectorAll("form[data-mailto]").forEach(function (form) {
     form.addEventListener("submit", function (event) {
@@ -330,6 +339,7 @@
       var href = "mailto:" + TO + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(lines.join("\n") + "\n");
       var status = form.querySelector(".form-status");
       if (status) status.textContent = "Your email app should open with this request filled in. If it doesn't, email " + TO + " directly.";
+      track("Lead", { content_name: form.getAttribute("data-mailto") || "Inquiry" });
       window.location.href = href;
     });
   });
