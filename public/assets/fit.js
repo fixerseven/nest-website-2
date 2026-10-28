@@ -181,6 +181,15 @@
     return r;
   }
 
+  // The contact details, asked one at a time after the result.
+  var FIELDS = [
+    { name: "name", label: "What's your name?", type: "text", auto: "name", required: true },
+    { name: "email", label: "What email should we reply to?", type: "email", auto: "email", required: true },
+    { name: "phone", label: "Your mobile number", type: "tel", auto: "tel" },
+    { name: "date", label: "When would you like to start?", type: "date" },
+    { name: "notes", label: "Anything else we should know?", type: "textarea" }
+  ];
+
   var answers = {};
   var history = [];
 
@@ -268,19 +277,49 @@
       '<details class="fit-answers"><summary>Your answers</summary><ul>' + answered + "</ul></details>" +
       "</div>" +
       '<form class="form fit-send" novalidate>' +
-      '<h3 class="h-md">Send this to Nest</h3><p class="muted">We\'ll reply with availability and get it ready for you.</p>' +
-      '<div class="form-row"><div class="field"><label for="fit-name">Name</label><input id="fit-name" name="name" autocomplete="name" required></div>' +
-      '<div class="field"><label for="fit-email">Email</label><input id="fit-email" name="email" type="email" autocomplete="email" required></div></div>' +
-      '<div class="form-row"><div class="field"><label for="fit-phone">Mobile <span class="opt">(optional)</span></label><input id="fit-phone" name="phone" type="tel" autocomplete="tel"></div>' +
-      '<div class="field"><label for="fit-date">Start date <span class="opt">(optional)</span></label><input id="fit-date" name="date" type="date"></div></div>' +
-      '<div class="field"><label for="fit-notes">Anything else? <span class="opt">(optional)</span></label><textarea id="fit-notes" name="notes"></textarea></div>' +
+      '<h3 class="h-md">Send this to Nest</h3><p class="muted">A few details and we\'ll reply with availability.</p>' +
+      FIELDS.map(function (f, i) {
+        var input = f.type === "textarea"
+          ? '<textarea id="fit-' + f.name + '" name="' + f.name + '"></textarea>'
+          : '<input id="fit-' + f.name + '" name="' + f.name + '" type="' + f.type + '"' + (f.auto ? ' autocomplete="' + f.auto + '"' : "") + (f.required ? " required" : "") + ">";
+        return '<div class="field fit-field" data-field="' + i + '"' + (i ? " hidden" : "") + '><span class="label">' + (i + 1) + " of " + FIELDS.length + "</span>" +
+          '<label for="fit-' + f.name + '">' + f.label + (f.required ? "" : ' <span class="opt">(optional)</span>') + "</label>" + input + "</div>";
+      }).join("") +
       '<input type="checkbox" name="botcheck" class="sr-only" tabindex="-1" autocomplete="off" aria-hidden="true">' +
-      '<div class="form-actions"><button class="btn btn-solid" type="submit">Send to Nest ' + ARROW + '</button>' +
+      '<div class="form-actions"><button class="btn btn-solid" type="submit" data-next>Next ' + ARROW + '</button>' +
+      '<button type="button" class="fit-back" data-field-back hidden>← Back</button>' +
       '<button type="button" class="fit-back" data-restart>Start over</button></div>' +
-      (KEY ? "" : '<p class="form-note">Sending opens your email app with everything filled in.</p>') +
+      (KEY ? "" : '<p class="form-note" data-send-note hidden>Sending opens your email app with everything filled in.</p>') +
       '<p class="form-status" role="status" aria-live="polite"></p></form>';
     stage.querySelector("[data-restart]").addEventListener("click", function () { answers = {}; history = []; showQuestion(0); });
-    stage.querySelector(".fit-send").addEventListener("submit", function (e) { e.preventDefault(); send(e.target, r); });
+    var form = stage.querySelector(".fit-send");
+    var at = 0;
+    var next = form.querySelector("[data-next]");
+    var back = form.querySelector("[data-field-back]");
+    var note = form.querySelector("[data-send-note]");
+    // One detail at a time: Next checks the current field, then shows the following one.
+    function showField(i) {
+      at = i;
+      form.querySelectorAll(".fit-field").forEach(function (el, n) { el.hidden = n !== i; });
+      back.hidden = i === 0;
+      if (note) note.hidden = i < FIELDS.length - 1;
+      nextLabel();
+      form[FIELDS[i].name].focus();
+    }
+    // An empty optional field reads "Skip"; the last one reads "Send to Nest".
+    function nextLabel() {
+      var f = FIELDS[at];
+      next.innerHTML = (at === FIELDS.length - 1 ? "Send to Nest " : f.required || form[f.name].value ? "Next " : "Skip ") + ARROW;
+    }
+    form.addEventListener("input", nextLabel);
+    back.addEventListener("click", function () { showField(at - 1); });
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var field = form[FIELDS[at].name];
+      if (!field.reportValidity()) return;
+      if (at < FIELDS.length - 1) showField(at + 1);
+      else send(form, r);
+    });
     focusStage();
   }
 

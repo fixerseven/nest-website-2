@@ -471,6 +471,9 @@ strong { font-weight: 600; }
 .fit-answers li span { color: var(--ink-2); }
 .fit .fit-send { padding: 28px 0 0; border-top: 1px solid var(--line); }
 .fit-send .fit-back { margin-top: 0; }
+.fit-field label { font-family: var(--serif); font-size: clamp(1.375rem, 2vw, 1.75rem); font-weight: 400; letter-spacing: -0.02em; }
+.fit-field label .opt { font-family: var(--sans); font-size: 14px; letter-spacing: 0; }
+@media (prefers-reduced-motion: no-preference) { .fit-field:not([hidden]) { animation: fade-up .5s cubic-bezier(.19, 1, .22, 1); } }
 @media (max-width: 900px) { .fit .fw-side .ph { display: none; } }
 
 /* Map */
