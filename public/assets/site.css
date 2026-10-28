@@ -165,6 +165,7 @@ strong { font-weight: 600; }
   padding: clamp(56px, 8vw, 96px) var(--gutter) clamp(48px, 7vw, 80px); border-bottom: 1px solid var(--line);
 }
 .wordmark .mark-block { grid-column: 1 / span 7; }
+.wordmark .mark-logo { width: clamp(200px, 30vw, 440px); height: auto; margin-left: -1.5%; }
 .wordmark .giant { font-family: var(--serif); font-size: clamp(7rem, 18.5vw, 17rem); font-weight: 380; line-height: .78; letter-spacing: -0.05em; }
 .wordmark .addr { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 20px; margin-top: 28px; }
 .wordmark .addr .a-serif { font-family: var(--serif); font-size: clamp(1.75rem, 2.8vw, 2.5rem); font-weight: 300; letter-spacing: -0.03em; }
@@ -208,7 +209,8 @@ strong { font-weight: 600; }
   padding: var(--space) var(--gutter) clamp(40px, 5vw, 64px);
 }
 .section-head > :first-child { grid-column: 1 / span 5; }
-.section-head > :nth-child(2) { grid-column: 7 / span 5; display: grid; gap: 20px; justify-items: start; align-content: start; }
+.section-head > :nth-child(2) { grid-column: 7 / span 5; }
+.section-head > div:nth-child(2) { display: grid; gap: 20px; justify-items: start; align-content: start; }
 .section-head.wide-text > :nth-child(2) { grid-column: 6 / span 6; font-size: clamp(1.0625rem, 1.4vw, 1.25rem); line-height: 1.5; }
 .section-head h2 { font-family: var(--serif); font-size: clamp(2.25rem, 4.4vw, 3.625rem); font-weight: 380; letter-spacing: -0.035em; line-height: 1; }
 .section-head.tight-top { padding-top: clamp(48px, 6vw, 80px); }
@@ -544,8 +546,8 @@ html.lenis { scroll-behavior: auto; }
   .js .hero .info-card { transform: translateY(48px); }
 
   /* Photos: a curtain lifts from the top while the photo settles from a slight zoom. */
-  .js :is(.ph, .story-ph, .article-hero, .float-card > img) { clip-path: inset(0 0 100% 0); transition: clip-path 1.1s cubic-bezier(.215, .61, .355, 1) var(--d, 0s); }
-  .js :is(.ph, .story-ph, .article-hero, .float-card > img).in { clip-path: inset(0 0 0 0); }
+  .js :is(.ph, .story-ph, .article-hero, .float-card > img, .mark-logo) { clip-path: inset(0 0 100% 0); transition: clip-path 1.1s cubic-bezier(.215, .61, .355, 1) var(--d, 0s); }
+  .js :is(.ph, .story-ph, .article-hero, .float-card > img, .mark-logo).in { clip-path: inset(0 0 0 0); }
   :is(.ph > img, .hero > img, .photo-band > img, .hour img, .story-ph img, .article-hero img) {
     transform: translate3d(0, var(--py, 0px), 0) scale(calc(var(--ps, 1.14) * var(--rs) * var(--hs)));
     transition: --rs 1.6s cubic-bezier(.215, .61, .355, 1) var(--d, 0s), --hs .8s cubic-bezier(.19, 1, .22, 1);

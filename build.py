@@ -215,7 +215,9 @@ def footer(name):
 def expand(body):
     body = body.replace("{{arrow}}", ARROW).replace("{{status}}", status_line())
     # Keep the closing dash of a title ("Nest —") on the same line as its last word.
-    return re.sub(r" —(?=</h[1-3]>|<span)", "&nbsp;—", body)
+    body = re.sub(r" —(?=</h[1-3]>|<span)", "&nbsp;—", body)
+    # Keep times together ("1 AM" never splits across lines).
+    return re.sub(r"(\d) (AM|PM)\b", r"\1&nbsp;\2", body)
 
 
 def story_card(slug, meta, cls=""):

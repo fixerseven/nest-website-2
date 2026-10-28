@@ -81,7 +81,7 @@
   var SPLIT = "h1, h2:not(.sr-only):not(.ways-intro), .giant, .a-serif, .a-caps, .way-name, .hour .t, .card h3, .float-card h3, .price, .big, .story-title, .cta-title";
   var FADE = ".label, .section-head:not(.wide-text) > p, .hero .info-card, .btn-row, .card > p:not(.price), .card .facts, .zones, .notice, .prose > :not(h2), .article-head > p, .ms-body > p, .tcell p, .way, .form, .rates-note, .lost .lead, .pill-tag, .feature-panel p:not(.big), .fw-side > p, .split > div > p:not(.s-big), .hour .d, .info-card > p";
   var LINES = ".rate, .faq-list details, .ticks li, .facts-grid > div, .wordmark, .split, .rates, .faq-list, .ticks:not(.cols), .footer-grid, .footer-base, .facts-grid, .section-head.ruled";
-  var PHOTOS = ".ph, .story-ph, .article-hero, .float-card > img, .hero, .photo-band, .hour";
+  var PHOTOS = ".ph, .story-ph, .article-hero, .float-card > img, .mark-logo, .hero, .photo-band, .hour";
   var SCRUB = ".wordmark .intro, .split .s-big, .page-intro > p, .ways-intro, .section-head.wide-text > p";
 
   function inScope(sel) {
