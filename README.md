@@ -15,6 +15,15 @@ Pages are generated. Edit the sources, then rebuild:
 - `build.py`: the shared head, top bar, menu and footer, and `public/sitemap.xml`.
 - `public/assets/site.css` and `site.js`: styles and behaviour, edited directly.
 
+## Search and sharing
+
+build.py writes the SEO parts of every page: title, description, canonical URL, Open Graph and X (Twitter) share tags, and schema.org data (the business with its hours, address and prices, breadcrumbs, FAQ questions on the FAQ page, and article data on stories). Keep the `BUSINESS` facts in build.py in step with the page copy.
+
+- Share images are 1200 by 630 crops in `public/img/og/<page>.jpg`. A page uses its own if it exists, or `og_image:` from its comment block, else `img/og-image.jpg`.
+- Internal links are written as clean URLs (`/coworking`), matching what Cloudflare serves.
+- `public/llms.txt` is a plain summary of Nest for AI assistants. Update it when prices or hours change.
+- `public/_headers` sets browser caching for images, fonts, CSS and JS.
+
 Don't edit the `.html` files in `public/` by hand; the next build overwrites them.
 
 ## Deploy (after Nath approves the preview)

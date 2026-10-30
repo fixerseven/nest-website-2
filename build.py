@@ -9,7 +9,9 @@ public/<name>.html and public/sitemap.xml.
     python3 build.py
 """
 import html
+import json
 import re
+import subprocess
 from datetime import date
 from pathlib import Path
 
@@ -28,6 +30,60 @@ FORM_KEY = ""
 POS_INTAKE_URL = "https://pos.nestworkspaces.com/api/intake/web"
 MESSENGER = "https://m.me/nestworkspacesph"
 MAPS = "https://www.google.com/maps/search/?api=1&amp;query=Nest%20Workspaces%20Horizons%20101%20Gen.%20Maxilom%20Ave%20Cebu%20City"
+SOCIALS = ["https://www.instagram.com/nestworkspacesph/", "https://www.facebook.com/nestworkspacesph"]
+
+# The business as search engines and AI assistants read it (schema.org JSON-LD on every page).
+# Keep these facts in step with the page copy: hours, address and prices.
+BUSINESS = {
+    "@type": "LocalBusiness",
+    "@id": f"{SITE}/#business",
+    "name": "Nest Workspaces",
+    "description": ("Coworking space and photo and video studios in Cebu City: day passes, memberships, "
+                    "private offices, meeting rooms by the hour, studio rentals and an event venue for 60 to 100 guests. "
+                    "Open to walk-ins daily 7 AM to 1 AM, and 24 hours for members."),
+    "url": f"{SITE}/",
+    "logo": f"{SITE}/favicon-512.png",
+    "image": [f"{SITE}/img/og-image.jpg", f"{SITE}/img/og/studios.jpg", f"{SITE}/img/og/meeting-rooms.jpg"],
+    "telephone": "+63 945 451 0789",
+    "email": "hello@nestworkspaces.com",
+    "priceRange": "₱400 to ₱39,000",
+    "currenciesAccepted": "PHP",
+    "paymentAccepted": "Cash, GCash, Credit Card, Debit Card, Bank Transfer",
+    "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "B1, Horizons 101 Condominiums, Gen. Maxilom Ave",
+        "addressLocality": "Cebu City",
+        "addressRegion": "Cebu",
+        "postalCode": "6000",
+        "addressCountry": "PH",
+    },
+    "hasMap": "https://www.google.com/maps/search/?api=1&query=Nest%20Workspaces%20Horizons%20101%20Gen.%20Maxilom%20Ave%20Cebu%20City",
+    # Walk-in hours. Closing at 01:00 (before opening) means 1 AM the next day. Members have 24-hour access.
+    "openingHoursSpecification": [{
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        "opens": "07:00",
+        "closes": "01:00",
+    }],
+    "amenityFeature": [
+        {"@type": "LocationFeatureSpecification", "name": name, "value": True}
+        for name in ["Free parking", "High-speed internet (300 Mbps)", "Free coffee, tea and water",
+                     "24-hour access for members", "Meeting rooms", "Photo and video studios"]
+    ],
+    "sameAs": SOCIALS,
+    "makesOffer": [
+        {"@type": "Offer", "name": name, "price": price, "priceCurrency": "PHP", "url": f"{SITE}/{page}"}
+        for name, price, page in [
+            ("Coworking Day Pass, 7 AM to 1 AM", "400", "coworking"),
+            ("Hotdesk Membership with 24-hour access, per month", "5500", "coworking"),
+            ("Private office, per month", "20000", "coworking"),
+            ("Small meeting room (6 seats), per hour", "400", "meeting-rooms"),
+            ("Large meeting room (12 seats), per hour", "900", "meeting-rooms"),
+            ("Studio 1 infinity wall, 4 hours", "9000", "studios"),
+            ("Entire Studio for events of 60 to 100 guests, 4 hours", "14000", "events"),
+        ]
+    ],
+}
 
 # Page order for the menu and the footer. (file name, menu label)
 NAV = [
@@ -71,13 +127,63 @@ def url_for(name):
     return f"{SITE}/" if name == "index" else f"{SITE}/{name}"
 
 
-def head(meta, name):
+def page_label(meta, name):
+    """Short page name for breadcrumbs: the menu label, or the story heading."""
+    return dict(NAV).get(name) or meta.get("heading") or meta["title"].split(" | ")[0]
+
+
+def structured_data(meta, name, body):
+    """schema.org JSON-LD for a page: the business, the site, the page, breadcrumbs, plus FAQ or article data."""
+    url = url_for(name)
+    graph = [BUSINESS, {
+        "@type": "WebSite", "@id": f"{SITE}/#website", "url": f"{SITE}/", "name": "Nest Workspaces",
+        "publisher": {"@id": f"{SITE}/#business"}, "inLanguage": "en",
+    }, {
+        "@type": "WebPage", "@id": f"{url}#webpage", "url": url, "name": meta["title"],
+        "description": meta.get("description", ""), "isPartOf": {"@id": f"{SITE}/#website"},
+        "about": {"@id": f"{SITE}/#business"}, "primaryImageOfPage": f"{SITE}/{og_image(meta, name)}", "inLanguage": "en",
+    }]
+    if name != "index":
+        crumbs = [("Home", f"{SITE}/")]
+        if name.startswith("story-"):
+            crumbs.append(("Stories", url_for("stories")))
+        crumbs.append((page_label(meta, name), url))
+        graph.append({"@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": i, "name": n, "item": u} for i, (n, u) in enumerate(crumbs, 1)]})
+    if name.startswith("story-"):
+        graph.append({
+            "@type": "BlogPosting", "headline": meta["heading"], "description": meta.get("dek", ""),
+            "image": f"{SITE}/{og_image(meta, name)}", "url": url, "mainEntityOfPage": {"@id": f"{url}#webpage"},
+            "author": {"@id": f"{SITE}/#business"}, "publisher": {"@id": f"{SITE}/#business"},
+            "datePublished": meta.get("published", ""), "dateModified": meta.get("modified", ""), "inLanguage": "en",
+        })
+    # Only the FAQ page carries FAQPage data; Google wants one page per set of questions.
+    qa = re.findall(r"<details><summary>(.*?)</summary><div>(.*?)</div></details>", body, re.S) if name == "faq" else []
+    if qa:
+        clean = lambda s: html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", s))).strip()
+        graph.append({"@type": "FAQPage", "mainEntity": [
+            {"@type": "Question", "name": clean(q), "acceptedAnswer": {"@type": "Answer", "text": clean(a)}} for q, a in qa]})
+    data = json.dumps({"@context": "https://schema.org", "@graph": graph}, ensure_ascii=False, separators=(",", ":"))
+    return '<script type="application/ld+json">\n' + data.replace("</", "<\\/") + "\n</script>\n"
+
+
+def og_image(meta, name):
+    """The share image: og_image from the page's comment block, else img/og/<name>.jpg, else the default."""
+    if "og_image" in meta:
+        return meta["og_image"]
+    return f"img/og/{name}.jpg" if (OUT / "img" / "og" / f"{name}.jpg").exists() else "img/og-image.jpg"
+
+
+def head(meta, name, body=""):
     title = meta["title"]
     desc = meta.get("description", "")
     noindex = meta.get("noindex") == "yes"
     canonical = "" if noindex else f'<link rel="canonical" href="{url_for(name)}">\n'
-    robots = '<meta name="robots" content="noindex">\n' if noindex else ""
-    image = meta.get("og_image", "img/og-image.jpg")
+    robots = '<meta name="robots" content="noindex">\n' if noindex else '<meta name="robots" content="index, follow, max-image-preview:large">\n'
+    image = og_image(meta, name)
+    image_alt = html.escape(meta.get("og_alt", "Inside Nest Workspaces, a coworking space and studio in Cebu City"))
+    og_type = "article" if name.startswith("story-") else "website"
+    schema = "" if noindex else structured_data(meta, name, body)
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -85,20 +191,31 @@ def head(meta, name):
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-{robots}{canonical}<meta property="og:type" content="website">
+{robots}{canonical}<meta property="og:type" content="{og_type}">
 <meta property="og:site_name" content="Nest Workspaces">
+<meta property="og:locale" content="en_PH">
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
 <meta property="og:url" content="{url_for(name)}">
 <meta property="og:image" content="{SITE}/{image}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{image_alt}">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#FFFCF7">
-<link rel="icon" href="favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="preload" href="assets/fonts/roboto-serif-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/poppins-regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/site.css">
+<meta name="twitter:title" content="{title}">
+<meta name="twitter:description" content="{desc}">
+<meta name="twitter:image" content="{SITE}/{image}">
+<meta name="geo.region" content="PH-CEB">
+<meta name="geo.placename" content="Cebu City">
+<link rel="manifest" href="/site.webmanifest">
+{schema}<meta name="theme-color" content="#FFFCF7">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preload" href="/assets/fonts/roboto-serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/poppins-regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://connect.facebook.net">
+<link rel="stylesheet" href="/assets/site.css">
 <script>
   // Mark JS as on (so motion styles apply) and show the intro loader once a day.
   (function (d) {{
@@ -276,6 +393,24 @@ def story_page(slug, meta, body, stories):
 """
 
 
+def clean_links(page):
+    """Link pages by their clean URL (/coworking, not coworking.html), the address Cloudflare serves and the
+    canonical URL, so visitors and crawlers skip a redirect."""
+    page = re.sub(r'href="index\.html(?=["#?])', 'href="/', page)
+    return re.sub(r'href="([a-z0-9-]+)\.html(?=["#?])', r'href="/\1', page)
+
+
+def last_changed(path, first=False):
+    """Date a source file last changed in git (so the sitemap only moves when content does).
+    With first=True, the date it was added."""
+    try:
+        out = subprocess.run(["git", "log", "--format=%cs", "--", str(path)],
+                             cwd=ROOT, capture_output=True, text=True, check=True).stdout.split()
+        return (out[-1] if first else out[0]) if out else date.today().isoformat()
+    except (OSError, subprocess.CalledProcessError):
+        return date.today().isoformat()
+
+
 def main():
     stories = {s: parse(SRC / "stories" / f"{s}.html") for s in STORIES}
     built = []
@@ -287,20 +422,22 @@ def main():
         if "{{story_cards}}" in body:
             cards = "".join(story_card(s, stories[s][0], "wide" if i == 0 else "") for i, s in enumerate(STORIES))
             body = body.replace("{{story_cards}}", cards)
-        page = head(meta, name) + topbar(name, meta.get("hero") == "photo") + body + footer(name)
-        (OUT / f"{name}.html").write_text(page, encoding="utf-8")
+        page = head(meta, name, body) + topbar(name, meta.get("hero") == "photo") + body + footer(name)
+        (OUT / f"{name}.html").write_text(clean_links(page), encoding="utf-8")
         if meta.get("noindex") != "yes":
-            built.append(name)
+            built.append((name, last_changed(path)))
 
     for slug, (meta, body) in stories.items():
         meta = dict(meta)
+        meta.setdefault("og_alt", meta["alt"])
+        meta.setdefault("published", last_changed(SRC / "stories" / f"{slug}.html", first=True))
+        meta.setdefault("modified", last_changed(SRC / "stories" / f"{slug}.html"))
         page = head(meta, slug) + topbar(slug, False) + story_page(slug, meta, expand(body), stories) + footer(slug)
-        (OUT / f"{slug}.html").write_text(page, encoding="utf-8")
-        built.append(slug)
+        (OUT / f"{slug}.html").write_text(clean_links(page), encoding="utf-8")
+        built.append((slug, last_changed(SRC / "stories" / f"{slug}.html")))
 
-    today = date.today().isoformat()
-    urls = "\n".join(f"  <url><loc>{url_for(n)}</loc><lastmod>{today}</lastmod></url>"
-                     for n in sorted(built, key=lambda n: (n != "index", n)))
+    urls = "\n".join(f"  <url><loc>{url_for(n)}</loc><lastmod>{d}</lastmod></url>"
+                     for n, d in sorted(built, key=lambda b: (b[0] != "index", b[0])))
     (OUT / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + "\n</urlset>\n", encoding="utf-8")
