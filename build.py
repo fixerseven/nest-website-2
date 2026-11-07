@@ -105,7 +105,9 @@ FOOTER_EXTRA = [
 ]
 
 # Story order on the stories page and in "Keep reading".
-STORIES = ["story-nest-2-0", "story-studio-1", "story-study-day", "story-meeting-rooms", "story-christmas-party"]
+STORIES = ["story-coworking-cebu-guide", "story-nest-2-0", "story-study-place-cebu", "story-photo-studio-rental-cebu",
+           "story-event-venue-cebu", "story-private-office-vs-coworking", "story-remote-work-cebu",
+           "story-studio-1", "story-study-day", "story-meeting-rooms", "story-christmas-party"]
 
 ARROW = ('<svg class="arw" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4"/></svg>')
 
@@ -354,7 +356,23 @@ def footer(name):
 """
 
 
+# Inline "Find your space" boxes for articles: {{fit:work}} and so on. (goal, heading, line, button)
+FIT_CTA = {
+    "work": ("Not sure which pass fits?", "Answer a few quick questions and we'll match you with a Day Pass, Flexi Pass, membership or office.", "Find your space"),
+    "meet": ("Need a room for your meeting?", "Tell us the date, time and headcount and we'll recommend a room and confirm it.", "Find a room"),
+    "shoot": ("Planning a shoot?", "Tell us what you're shooting and for how long, and we'll suggest the right studio and send the total.", "Plan your shoot"),
+    "event": ("Planning an event?", "Tell us the date and guest count, and we'll recommend a room and send a quote.", "Plan your event"),
+}
+
+
+def fit_cta(goal):
+    title, line, label = FIT_CTA[goal]
+    return (f'<aside class="inline-cta"><p class="cta-title">{title}</p><p>{line}</p>'
+            f'<a class="btn btn-solid" href="find-your-space.html?goal={goal}">{label} {ARROW}</a></aside>')
+
+
 def expand(body):
+    body = re.sub(r"\{\{fit:(\w+)\}\}", lambda m: fit_cta(m.group(1)), body)
     body = body.replace("{{arrow}}", ARROW).replace("{{status}}", status_line())
     body = body.replace("{{email}}", EMAIL).replace("{{form_key}}", FORM_KEY).replace("{{pos_intake}}", POS_INTAKE_URL)
     # Keep the closing dash of a title ("Nest —") on the same line as its last word.
