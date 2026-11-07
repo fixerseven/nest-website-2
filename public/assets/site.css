@@ -514,6 +514,11 @@ strong { font-weight: 600; }
 .prose .rates { margin-top: 1.4em; }
 .article-cta { max-width: 68ch; margin: 56px auto 0; padding: 28px; border-radius: var(--radius); background: var(--tint); display: grid; gap: 12px; justify-items: start; }
 .article-cta .cta-title { font-family: var(--serif); font-size: 32px; font-weight: 420; letter-spacing: -0.035em; line-height: 1; }
+.prose .inline-cta { margin: 2em 0; padding: 24px 24px 24px 22px; border-left: 3px solid var(--orange); border-radius: var(--radius); background: var(--tint); display: grid; gap: 10px; justify-items: start; }
+.prose .inline-cta .cta-title { font-family: var(--serif); font-size: 24px; font-weight: 420; letter-spacing: -0.03em; line-height: 1.1; }
+.prose .inline-cta p { margin: 0; }
+.prose .inline-cta .btn { margin-top: 4px; color: var(--bg); }
+.prose .inline-cta .btn:hover { color: #fff; }
 
 /* 404 */
 .lost { min-height: 60vh; display: grid; align-content: center; gap: 28px; padding: var(--space) var(--gutter); justify-items: start; }
