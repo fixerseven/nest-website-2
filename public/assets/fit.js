@@ -382,7 +382,10 @@
     if (tour && r.main !== "tour") lines.splice(lines.indexOf("Answers:") - 1, 0, "Wants a tour: Yes");
     var subject = (tour ? "Tour request: " : "Find your space: ") + main.name + " for " + v("name");
     // Count a sent form as a Lead when the Meta Pixel is on the page.
-    function lead() { if (window.fbq) window.fbq("track", "Lead"); }
+    function lead() {
+      if (window.fbq) window.fbq("track", "Lead");
+      (window.dataLayer = window.dataLayer || []).push({ event: "generate_lead", form: "find_your_space" });
+    }
 
     var esc = function (t) { return t.replace(/[<>&"]/g, ""); };
 

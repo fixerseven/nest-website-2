@@ -255,7 +255,12 @@ def head(meta, name, body=""):
   fbq('track', 'PageView');
 </script>
 <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1346842319931970&amp;ev=PageView&amp;noscript=1"></noscript>
-<!-- Google Analytics 4: paste the gtag.js snippet here and replace G-XXXXXXXXXX. -->
+<!-- Google Tag Manager (GA4 and other tags are set up inside the GTM-5H2RXQNR container). -->
+<script>(function(w,d,s,l,i){{w[l]=w[l]||[];w[l].push({{'gtm.start':
+new Date().getTime(),event:'gtm.js'}});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+}})(window,document,'script','dataLayer','GTM-5H2RXQNR');</script>
 </head>
 """
 
@@ -273,6 +278,7 @@ def topbar(name, on_photo):
         f'      <li><a href="{n}.html"{current if n == name else ""}>{label}</a></li>'
         for n, label in NAV)
     return f"""<body>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5H2RXQNR" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
 <div class="loader" aria-hidden="true">
   <p class="loader-top"><span>Nest Workspaces</span><span>Cebu City</span></p>
   <div class="loader-bottom">
