@@ -71,6 +71,7 @@ BUSINESS = {
         for name in ["Free parking", "High-speed internet (300 Mbps)", "Free coffee, tea and water",
                      "24-hour access for members", "Meeting rooms", "Photo and video studios"]
     ],
+    "award": "SunStar Best of Cebu: Best Coworking Space",
     "sameAs": SOCIALS,
     "makesOffer": [
         {"@type": "Offer", "name": name, "price": price, "priceCurrency": "PHP", "url": f"{SITE}/{page}"}
