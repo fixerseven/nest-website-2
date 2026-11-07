@@ -57,6 +57,7 @@ BUSINESS = {
         "postalCode": "6000",
         "addressCountry": "PH",
     },
+    "geo": {"@type": "GeoCoordinates", "latitude": 10.31044, "longitude": 123.89730},
     "hasMap": "https://www.google.com/maps/search/?api=1&query=Nest%20Workspaces%20Horizons%20101%20Gen.%20Maxilom%20Ave%20Cebu%20City",
     # Walk-in hours. Closing at 01:00 (before opening) means 1 AM the next day. Members have 24-hour access.
     "openingHoursSpecification": [{
@@ -75,6 +76,7 @@ BUSINESS = {
         {"@type": "Offer", "name": name, "price": price, "priceCurrency": "PHP", "url": f"{SITE}/{page}"}
         for name, price, page in [
             ("Coworking Day Pass, 7 AM to 1 AM", "400", "coworking"),
+            ("Owl Pass, 24 hours", "550", "study-hub-cebu"),
             ("Hotdesk Membership with 24-hour access, per month", "5500", "coworking"),
             ("Private office, per month", "20000", "coworking"),
             ("Small meeting room (6 seats), per hour", "400", "meeting-rooms"),
@@ -95,6 +97,11 @@ NAV = [
     ("stories", "Stories"),
     ("faq", "FAQ"),
     ("visit", "Visit"),
+]
+
+# Landing pages for specific searches: linked from the footer, not the menu. (file name, label)
+FOOTER_EXTRA = [
+    ("study-hub-cebu", "Study hub"),
 ]
 
 # Story order on the stories page and in "Keep reading".
@@ -131,7 +138,7 @@ def url_for(name):
 
 def page_label(meta, name):
     """Short page name for breadcrumbs: the menu label, or the story heading."""
-    return dict(NAV).get(name) or meta.get("heading") or meta["title"].split(" | ")[0]
+    return dict(NAV + FOOTER_EXTRA).get(name) or meta.get("heading") or meta["title"].split(" | ")[0]
 
 
 def structured_data(meta, name, body):
@@ -159,8 +166,10 @@ def structured_data(meta, name, body):
             "author": {"@id": f"{SITE}/#business"}, "publisher": {"@id": f"{SITE}/#business"},
             "datePublished": meta.get("published", ""), "dateModified": meta.get("modified", ""), "inLanguage": "en",
         })
-    # Only the FAQ page carries FAQPage data; Google wants one page per set of questions.
-    qa = re.findall(r"<details><summary>(.*?)</summary><div>(.*?)</div></details>", body, re.S) if name == "faq" else []
+    # FAQPage data only where a page says so (faq_schema: yes) and on the FAQ page, so the same questions
+    # aren't marked up on several pages.
+    wants_faq = name == "faq" or meta.get("faq_schema") == "yes"
+    qa = re.findall(r"<details><summary>(.*?)</summary><div>(.*?)</div></details>", body, re.S) if wants_faq else []
     if qa:
         clean = lambda s: html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", s))).strip()
         graph.append({"@type": "FAQPage", "mainEntity": [
@@ -298,7 +307,7 @@ def topbar(name, on_photo):
 
 
 def footer(name):
-    nav = "".join(f'<li><a href="{n}.html">{label}</a></li>' for n, label in NAV)
+    nav = "".join(f'<li><a href="{n}.html">{label}</a></li>' for n, label in NAV + FOOTER_EXTRA)
     socials = "".join(
         f'<a href="{href}" aria-label="{label}"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">{ICONS[key]}</svg></a>'
         for key, label, href in [
