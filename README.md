@@ -24,7 +24,7 @@ build.py writes the SEO parts of every page: title, description, canonical URL, 
 - Internal links are written as clean URLs (`/coworking`), matching what Cloudflare serves.
 - `src/llms.txt` is a plain summary of Nest for AI assistants. Update it when prices or hours change; stories are listed automatically.
 - `public/robots.txt` allows every crawler and names the AI search crawlers (GPTBot, ClaudeBot, PerplexityBot and others) explicitly.
-- `public/_headers` sets browser caching for images, fonts, CSS and JS.
+- `public/_headers` sets browser caching: pages, sitemap and llms.txt rechecked on every visit, images 7 days, CSS and JS an hour, fonts and `assets/vendor/` a year (rename a vendored file when it changes). It also keeps workers.dev and preview URLs out of search results.
 
 Don't edit the `.html` files in `public/` by hand; the next build overwrites them.
 
