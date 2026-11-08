@@ -18,6 +18,9 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 SRC = ROOT / "src"
 OUT = ROOT / "public"
+# Original photos. The build writes WebP copies into public/img/ at full size and at these widths.
+PHOTOS = ROOT / "source-photos"
+PHOTO_WIDTHS = (800, 1200)
 SITE = "https://nestworkspaces.com"
 
 PHONE = "(0945) 451 0789"
@@ -395,7 +398,9 @@ def expand(body):
 
 def story_card(slug, meta, cls=""):
     return (f'<a class="story-card {cls}" href="{slug}.html">'
-            f'<span class="story-ph"><img src="{meta["image"]}" alt="" width="800" height="1000" loading="lazy" decoding="async" style="object-position: {meta["pos"]}"></span>'
+            f'<span class="story-ph"><img src="{meta["image"]}" alt="" width="800" height="1000" loading="lazy" decoding="async" '
+            f'sizes="{"100vw" if "wide" in cls else "(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw"}" '
+            f'style="object-position: {meta["pos"]}"></span>'
             f'<span class="label">{meta["chip"]}</span>'
             f'<span class="story-title">{meta["heading"]}</span>'
             f'<span class="story-more">Read more {ARROW}</span></a>')
@@ -432,6 +437,69 @@ def story_page(slug, meta, body, stories):
 """
 
 
+def webp_width(path):
+    """Pixel width of a WebP file, read from its header (no Pillow needed)."""
+    data = path.read_bytes()[:30]
+    chunk = data[12:16]
+    if chunk == b"VP8 ":
+        return int.from_bytes(data[26:28], "little") & 0x3FFF
+    if chunk == b"VP8L":
+        return (int.from_bytes(data[21:25], "little") & 0x3FFF) + 1
+    if chunk == b"VP8X":
+        return int.from_bytes(data[24:27], "little") + 1
+    raise ValueError(f"not a WebP file: {path}")
+
+
+def photo_variants(rel):
+    """The WebP files for source-photos/<rel>.jpg as [(public path, width)], smallest first."""
+    full = OUT / "img" / f"{rel}.webp"
+    if not full.exists():
+        return []
+    files = [(f"img/{rel}-{w}.webp", w) for w in PHOTO_WIDTHS if (OUT / "img" / f"{rel}-{w}.webp").exists()]
+    return files + [(f"img/{rel}.webp", webp_width(full))]
+
+
+def optimise_photos():
+    """Write each photo in source-photos/ to public/img/ as WebP, at full size and at PHOTO_WIDTHS when the
+    photo is wider. Skips photos whose WebP files are newer than the original. Needs Pillow."""
+    try:
+        from PIL import Image
+    except ImportError:
+        print("Pillow is not installed (pip install pillow): photos in source-photos/ were not converted.")
+        return
+    for src in sorted(PHOTOS.rglob("*.jpg")):
+        rel = src.relative_to(PHOTOS).with_suffix("").as_posix()
+        full = OUT / "img" / f"{rel}.webp"
+        if full.exists() and full.stat().st_mtime >= src.stat().st_mtime:
+            continue
+        full.parent.mkdir(parents=True, exist_ok=True)
+        with Image.open(src) as im:
+            im = im.convert("RGB")
+            im.save(full, "WEBP", quality=80, method=6)
+            for w in PHOTO_WIDTHS:
+                if im.width > w:
+                    im.resize((w, round(im.height * w / im.width)), Image.LANCZOS).save(
+                        OUT / "img" / f"{rel}-{w}.webp", "WEBP", quality=80, method=6)
+
+
+def responsive_images(page):
+    """Point <img> tags at the WebP copies of photos in source-photos/, with a srcset so phones download a
+    smaller file. sizes defaults to the full viewport width unless the tag sets its own. Images that a script
+    swaps (data-fit-photo) get the full-size WebP only, since a srcset would override the swap."""
+    def swap(m):
+        tag, rel = m.group(0), m.group(1)
+        files = photo_variants(rel)
+        if not files:
+            return tag
+        tag = tag.replace(f'src="img/{rel}.jpg"', f'src="img/{rel}.webp"')
+        if len(files) > 1 and "data-fit-photo" not in tag:
+            srcset = ", ".join(f"{f} {w}w" for f, w in files)
+            extra = f' srcset="{srcset}"' + ("" if " sizes=" in tag else ' sizes="100vw"')
+            tag = tag.replace(f'src="img/{rel}.webp"', f'src="img/{rel}.webp"{extra}')
+        return tag
+    return re.sub(r'<img [^>]*?src="img/([a-z0-9/-]+)\.jpg"[^>]*>', swap, page)
+
+
 def clean_links(page):
     """Link pages by their clean URL (/coworking, not coworking.html), the address Cloudflare serves and the
     canonical URL, so visitors and crawlers skip a redirect."""
@@ -461,6 +529,7 @@ def write_llms(stories):
 
 
 def main():
+    optimise_photos()
     stories = {s: parse(SRC / "stories" / f"{s}.html") for s in STORIES}
     built = []
 
@@ -472,7 +541,7 @@ def main():
             cards = "".join(story_card(s, stories[s][0], "wide" if i == 0 else "") for i, s in enumerate(STORIES))
             body = body.replace("{{story_cards}}", cards)
         page = head(meta, name, body) + topbar(name, meta.get("hero") == "photo") + body + footer(name)
-        (OUT / f"{name}.html").write_text(clean_links(page), encoding="utf-8")
+        (OUT / f"{name}.html").write_text(responsive_images(clean_links(page)), encoding="utf-8")
         if meta.get("noindex") != "yes":
             built.append((name, last_changed(path)))
 
@@ -482,7 +551,7 @@ def main():
         meta.setdefault("published", last_changed(SRC / "stories" / f"{slug}.html", first=True))
         meta.setdefault("modified", last_changed(SRC / "stories" / f"{slug}.html"))
         page = head(meta, slug) + topbar(slug, False) + story_page(slug, meta, expand(body), stories) + footer(slug)
-        (OUT / f"{slug}.html").write_text(clean_links(page), encoding="utf-8")
+        (OUT / f"{slug}.html").write_text(responsive_images(clean_links(page)), encoding="utf-8")
         built.append((slug, last_changed(SRC / "stories" / f"{slug}.html")))
 
     urls = "\n".join(f"  <url><loc>{url_for(n)}</loc><lastmod>{d}</lastmod></url>"

@@ -16,12 +16,12 @@
   var ARROW = '<svg class="arw" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4"/></svg>';
 
   var PHOTOS = {
-    start: "img/nest-interior.jpg",
-    work: "img/people/girls-laptop-orange.jpg",
-    meet: "img/meeting-room-small.jpg",
-    shoot: "img/studio-cyclorama.jpg",
-    event: "img/studio-group.jpg",
-    done: "img/lounge-create.jpg"
+    start: "img/nest-interior.webp",
+    work: "img/people/girls-laptop-orange.webp",
+    meet: "img/meeting-room-small.webp",
+    shoot: "img/studio-cyclorama.webp",
+    event: "img/studio-group.webp",
+    done: "img/lounge-create.webp"
   };
 
   // Each question: id, the text, its options [value, label, hint], and which path it belongs to.

@@ -15,6 +15,7 @@ Pages are generated. Edit the sources, then rebuild:
 - `build.py`: the shared head, top bar, menu and footer, `public/sitemap.xml` and `public/llms.txt`.
 - `src/llms.txt`: the summary of Nest for AI assistants. The build adds the list of stories and writes `public/llms.txt`.
 - `public/assets/site.css` and `site.js`: styles and behaviour, edited directly.
+- `source-photos/`: original photos (JPG), not published. The build writes WebP copies to `public/img/` at full size and 800 and 1200 px wide, and points every `<img src="img/<name>.jpg">` at them with a `srcset` so phones load a smaller file. Add a photo here and reference it as `img/<name>.jpg`. Needs Pillow (`pip install pillow`); photos that haven't changed are skipped.
 
 ## Search and sharing
 
