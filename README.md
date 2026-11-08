@@ -12,8 +12,10 @@ Pages are generated. Edit the sources, then rebuild:
 
 - `src/pages/*.html`: one file per page (home, coworking, meeting rooms, studios, events, stories, FAQ, visit, 404). Each starts with a comment block holding its title and description.
 - `src/stories/*.html`: one file per story. The stories page and "More stories" are built from these.
-- `build.py`: the shared head, top bar, menu and footer, and `public/sitemap.xml`.
+- `build.py`: the shared head, top bar, menu and footer, `public/sitemap.xml` and `public/llms.txt`.
+- `src/llms.txt`: the summary of Nest for AI assistants. The build adds the list of stories and writes `public/llms.txt`.
 - `public/assets/site.css` and `site.js`: styles and behaviour, edited directly.
+- `source-photos/`: original photos (JPG), not published. The build writes WebP copies to `public/img/` at full size and 800 and 1200 px wide, and points every `<img src="img/<name>.jpg">` at them with a `srcset` so phones load a smaller file. Add a photo here and reference it as `img/<name>.jpg`. Needs Pillow (`pip install pillow`); photos that haven't changed are skipped.
 
 ## Search and sharing
 
@@ -21,8 +23,9 @@ build.py writes the SEO parts of every page: title, description, canonical URL, 
 
 - Share images are 1200 by 630 crops in `public/img/og/<page>.jpg`. A page uses its own if it exists, or `og_image:` from its comment block, else `img/og-image.jpg`.
 - Internal links are written as clean URLs (`/coworking`), matching what Cloudflare serves.
-- `public/llms.txt` is a plain summary of Nest for AI assistants. Update it when prices or hours change.
-- `public/_headers` sets browser caching for images, fonts, CSS and JS.
+- `src/llms.txt` is a plain summary of Nest for AI assistants. Update it when prices or hours change; stories are listed automatically.
+- `public/robots.txt` allows every crawler and names the AI search crawlers (GPTBot, ClaudeBot, PerplexityBot and others) explicitly.
+- `public/_headers` sets browser caching: pages, sitemap and llms.txt rechecked on every visit, images 7 days, CSS and JS an hour, fonts and `assets/vendor/` a year (rename a vendored file when it changes). It also keeps workers.dev and preview URLs out of search results.
 
 Don't edit the `.html` files in `public/` by hand; the next build overwrites them.
 
