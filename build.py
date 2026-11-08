@@ -165,7 +165,8 @@ def structured_data(meta, name, body):
             "@type": "BlogPosting", "headline": meta["heading"], "description": meta.get("dek", ""),
             "image": f"{SITE}/{og_image(meta, name)}", "url": url, "mainEntityOfPage": {"@id": f"{url}#webpage"},
             "author": {"@id": f"{SITE}/#business"}, "publisher": {"@id": f"{SITE}/#business"},
-            "datePublished": meta.get("published", ""), "dateModified": meta.get("modified", ""), "inLanguage": "en",
+            "datePublished": meta.get("published", ""), "dateModified": meta.get("modified", ""),
+            "articleSection": meta.get("chip", ""), "inLanguage": "en",
         })
     # FAQPage data only where a page says so (faq_schema: yes) and on the FAQ page, so the same questions
     # aren't marked up on several pages.
@@ -195,6 +196,9 @@ def head(meta, name, body=""):
     image = og_image(meta, name)
     image_alt = html.escape(meta.get("og_alt", "Inside Nest Workspaces, a coworking space and studio in Cebu City"))
     og_type = "article" if name.startswith("story-") else "website"
+    article = "".join(f'<meta property="article:{k}" content="{meta[m]}">\n'
+                      for k, m in (("published_time", "published"), ("modified_time", "modified"), ("section", "chip"))
+                      if og_type == "article" and meta.get(m))
     schema = "" if noindex else structured_data(meta, name, body)
     return f"""<!doctype html>
 <html lang="en">
@@ -213,10 +217,11 @@ def head(meta, name, body=""):
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="{image_alt}">
-<meta name="twitter:card" content="summary_large_image">
+{article}<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{title}">
 <meta name="twitter:description" content="{desc}">
 <meta name="twitter:image" content="{SITE}/{image}">
+<meta name="twitter:image:alt" content="{image_alt}">
 <meta name="geo.region" content="PH-CEB">
 <meta name="geo.placename" content="Cebu City">
 <link rel="manifest" href="/site.webmanifest">
