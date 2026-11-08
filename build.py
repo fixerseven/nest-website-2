@@ -4,7 +4,7 @@
 Pages live in src/pages/*.html and stories in src/stories/*.html. Each file starts with a
 comment block of `key: value` lines (title, description and so on), followed by the page body.
 This script wraps every body in the shared head, top bar, menu and footer, then writes
-public/<name>.html and public/sitemap.xml.
+public/<name>.html, public/sitemap.xml and public/llms.txt (src/llms.txt plus the story list).
 
     python3 build.py
 """
@@ -445,6 +445,16 @@ def last_changed(path, first=False):
         return date.today().isoformat()
 
 
+def write_llms(stories):
+    """public/llms.txt for AI assistants: the hand-written summary in src/llms.txt, then every story with its
+    description, so a new story is listed without anyone remembering to add it."""
+    text = lambda s: html.unescape(re.sub(r"<[^>]+>", "", s)).strip()
+    lines = [f"- [{text(meta['heading'])}]({url_for(slug)}): {text(meta.get('description') or meta['dek'])}"
+             for slug, (meta, _) in ((s, stories[s]) for s in STORIES)]
+    summary = (SRC / "llms.txt").read_text(encoding="utf-8").rstrip()
+    (OUT / "llms.txt").write_text(summary + "\n\n## Stories and guides\n\n" + "\n".join(lines) + "\n", encoding="utf-8")
+
+
 def main():
     stories = {s: parse(SRC / "stories" / f"{s}.html") for s in STORIES}
     built = []
@@ -475,6 +485,7 @@ def main():
     (OUT / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + "\n</urlset>\n", encoding="utf-8")
+    write_llms(stories)
     print(f"Built {len(built)} pages into {OUT}")
 
 

@@ -12,7 +12,8 @@ Pages are generated. Edit the sources, then rebuild:
 
 - `src/pages/*.html`: one file per page (home, coworking, meeting rooms, studios, events, stories, FAQ, visit, 404). Each starts with a comment block holding its title and description.
 - `src/stories/*.html`: one file per story. The stories page and "More stories" are built from these.
-- `build.py`: the shared head, top bar, menu and footer, and `public/sitemap.xml`.
+- `build.py`: the shared head, top bar, menu and footer, `public/sitemap.xml` and `public/llms.txt`.
+- `src/llms.txt`: the summary of Nest for AI assistants. The build adds the list of stories and writes `public/llms.txt`.
 - `public/assets/site.css` and `site.js`: styles and behaviour, edited directly.
 
 ## Search and sharing
@@ -21,7 +22,8 @@ build.py writes the SEO parts of every page: title, description, canonical URL, 
 
 - Share images are 1200 by 630 crops in `public/img/og/<page>.jpg`. A page uses its own if it exists, or `og_image:` from its comment block, else `img/og-image.jpg`.
 - Internal links are written as clean URLs (`/coworking`), matching what Cloudflare serves.
-- `public/llms.txt` is a plain summary of Nest for AI assistants. Update it when prices or hours change.
+- `src/llms.txt` is a plain summary of Nest for AI assistants. Update it when prices or hours change; stories are listed automatically.
+- `public/robots.txt` allows every crawler and names the AI search crawlers (GPTBot, ClaudeBot, PerplexityBot and others) explicitly.
 - `public/_headers` sets browser caching for images, fonts, CSS and JS.
 
 Don't edit the `.html` files in `public/` by hand; the next build overwrites them.
