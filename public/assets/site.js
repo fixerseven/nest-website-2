@@ -311,9 +311,19 @@
     });
   });
 
-  // Meta Pixel events. fbq is loaded in the page head; skip quietly if it was blocked.
+  // Meta Pixel events (fbq is loaded in the page head; skip quietly if it was blocked),
+  // mirrored to the dataLayer so Google Tag Manager can send them to GA4 under GA4's
+  // recommended names: Lead -> generate_lead, Contact -> contact.
+  var GA_EVENT = { Lead: "generate_lead", Contact: "contact" };
   function track(name, params) {
-    try { if (window.fbq) window.fbq("track", name, params || {}); } catch (e) {}
+    params = params || {};
+    try { if (window.fbq) window.fbq("track", name, params); } catch (e) {}
+    if (GA_EVENT[name]) {
+      var push = { event: GA_EVENT[name] };
+      if (name === "Lead") push.form = params.content_name;
+      if (name === "Contact") push.method = params.content_name;
+      (window.dataLayer = window.dataLayer || []).push(push);
+    }
   }
   document.addEventListener("click", function (event) {
     var a = event.target.closest && event.target.closest('a[href^="https://m.me/"], a[href^="tel:"], a[href^="mailto:"]');
