@@ -28,3 +28,12 @@
 /img/studio-lights.jpg /img/studio-lights.webp 301
 /img/studio-lounge.jpg /img/studio-lounge.webp 301
 /img/studio-shoot.jpg /img/studio-shoot.webp 301
+
+# Pages from the previous site that still get visits and Google impressions (GA4 and
+# Search Console, Oct to Nov 2026) and returned 404.
+/about / 301
+/workspaces /coworking 301
+/contact /visit 301
+/stories/remote-workers-are-abandoning-home-offices /story-remote-work-cebu 301
+# Any other old /stories/<slug> post goes to the stories index rather than a 404.
+/stories/* /stories 301
