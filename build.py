@@ -33,6 +33,7 @@ FORM_KEY = ""
 POS_INTAKE_URL = "https://pos.nestworkspaces.com/api/intake/web"
 MESSENGER = "https://m.me/nestworkspacesph"
 MAPS = "https://www.google.com/maps/search/?api=1&amp;query=Nest%20Workspaces%20Horizons%20101%20Gen.%20Maxilom%20Ave%20Cebu%20City"
+REVIEW = "https://g.page/r/CeYq1D9can_uEBM/review"  # Google Business Profile review form
 SOCIALS = ["https://www.instagram.com/nestworkspacesph/", "https://www.facebook.com/nestworkspacesph"]
 
 # The business as search engines and AI assistants read it (schema.org JSON-LD on every page).
@@ -346,6 +347,7 @@ def footer(name):
       <p class="label">Visit</p>
       <p>B1, Horizons 101 Condominiums<br>Gen. Maxilom Ave, Cebu City</p>
       <p><a href="{MAPS}">Open in Google Maps</a></p>
+      <p><a href="{REVIEW}">Review us on Google</a></p>
     </div>
     <div>
       <p class="label">Hours</p>
